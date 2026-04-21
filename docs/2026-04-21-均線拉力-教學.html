@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>股票均線拉力教學</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', Arial, sans-serif; background: #0f0f1a; color: #e0e0e0; min-height: 100vh; }
+  h1 { text-align: center; padding: 20px; font-size: 1.6em; color: #f0c040; letter-spacing: 2px; }
+  .subtitle { text-align: center; color: #aaa; font-size: 0.9em; margin-bottom: 20px; }
+
+  .layout { display: flex; gap: 16px; padding: 0 20px 20px; flex-wrap: wrap; }
+  .chart-section { flex: 1; min-width: 500px; }
+  .panel { background: #1a1a2e; border-radius: 12px; padding: 20px; border: 1px solid #2a2a4a; }
+
+  canvas { width: 100%; border-radius: 8px; background: #12122a; display: block; }
+
+  .controls { margin-top: 16px; display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+  .btn { padding: 8px 18px; border-radius: 8px; border: none; cursor: pointer; font-size: 0.9em; font-weight: bold; transition: all 0.2s; }
+  .btn-up   { background: #e74c3c; color: #fff; }
+  .btn-down { background: #2ecc71; color: #fff; }
+  .btn-reset{ background: #555; color: #fff; }
+  .btn:hover { opacity: 0.85; transform: scale(1.05); }
+
+  .step-slider { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+  .step-slider label { font-size: 0.85em; color: #aaa; white-space: nowrap; }
+  input[type=range] { flex: 1; accent-color: #f0c040; }
+
+  .side-panel { width: 280px; min-width: 240px; display: flex; flex-direction: column; gap: 14px; }
+  .info-box h3 { color: #f0c040; font-size: 0.95em; margin-bottom: 8px; border-bottom: 1px solid #2a2a4a; padding-bottom: 6px; }
+  .info-box p, .info-box li { font-size: 0.82em; color: #bbb; line-height: 1.7; }
+  .info-box ul { padding-left: 16px; }
+  .info-box li { margin-bottom: 4px; }
+
+  .stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 4px; }
+  .stat-card { background: #12122a; border-radius: 8px; padding: 10px; text-align: center; }
+  .stat-card .val { font-size: 1.3em; font-weight: bold; }
+  .stat-card .lbl { font-size: 0.72em; color: #888; margin-top: 2px; }
+  .up-color   { color: #e74c3c; }
+  .down-color { color: #2ecc71; }
+  .neutral    { color: #f0c040; }
+
+  .formula-box { background: #12122a; border-radius: 8px; padding: 12px; margin-top: 8px; }
+  .formula-box .formula { font-family: monospace; font-size: 0.85em; color: #7ec8e3; line-height: 1.8; }
+
+  .log-box { max-height: 140px; overflow-y: auto; }
+  .log-entry { font-size: 0.78em; padding: 3px 0; border-bottom: 1px solid #1e1e3a; color: #ccc; }
+  .log-entry.up   { color: #e74c3c; }
+  .log-entry.down { color: #2ecc71; }
+
+  .legend { display: flex; gap: 14px; margin-top: 10px; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 0.78em; color: #aaa; }
+  .legend-dot { width: 22px; height: 3px; border-radius: 2px; }
+
+  @media (max-width: 720px) {
+    .side-panel { width: 100%; }
+    .chart-section { min-width: unset; }
+  }
+</style>
+</head>
+<body>
+
+<h1>📈 股票均線拉力 互動教學</h1>
+<p class="subtitle">點擊「加入上漲K線」或「加入下跌K線」，觀察均線如何被拉動</p>
+
+<div class="layout">
+  <!-- 圖表區 -->
+  <div class="chart-section">
+    <div class="panel">
+      <canvas id="chart" height="320"></canvas>
+
+      <div class="legend">
+        <div class="legend-item"><div class="legend-dot" style="background:#f0c040"></div>收盤價</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#7ec8e3"></div>5日均線 (MA5)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff9f43"></div>10日均線 (MA10)</div>
+        <div class="legend-item"><div class="legend-dot" style="background:#ff6b9d"></div>20日均線 (MA20)</div>
+      </div>
+
+      <div class="controls">
+        <button class="btn btn-up"   onclick="addCandle('up')">▲ 加入上漲K線</button>
+        <button class="btn btn-down" onclick="addCandle('down')">▼ 加入下跌K線</button>
+        <button class="btn btn-reset" onclick="resetChart()">↺ 重置</button>
+      </div>
+
+      <div class="step-slider">
+        <label>漲跌幅度：</label>
+        <input type="range" id="stepSize" min="1" max="8" value="3">
+        <span id="stepLabel" style="font-size:0.85em;color:#f0c040;min-width:28px">±3%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 說明面板 -->
+  <div class="side-panel">
+
+    <div class="panel info-box">
+      <h3>📊 即時數據</h3>
+      <div class="stats">
+        <div class="stat-card">
+          <div class="val neutral" id="statPrice">-</div>
+          <div class="lbl">最新收盤價</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statChg">-</div>
+          <div class="lbl">累計漲跌</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statMA5" style="color:#7ec8e3">-</div>
+          <div class="lbl">MA5</div>
+        </div>
+        <div class="stat-card">
+          <div class="val" id="statMA10" style="color:#ff9f43">-</div>
+          <div class="lbl">MA10</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel info-box">
+      <h3>📐 均線公式</h3>
+      <div class="formula-box">
+        <div class="formula">
+          MA5 = (P1+P2+P3+P4+P5) ÷ 5<br><br>
+          每新增一根K線，<br>
+          最舊的價格被「擠出」，<br>
+          新價格被「納入」計算。
+        </div>
+      </div>
+    </div>
+
+    <div class="panel info-box">
+      <h3>💡 拉力原理</h3>
+      <ul>
+        <li>當新收盤價 <span style="color:#e74c3c">高於均線</span>，均線被向上拉</li>
+        <li>當新收盤價 <span style="color:#2ecc71">低於均線</span>，均線被向下拉</li>
+        <li>短期均線（MA5）反應 <strong>最快</strong></li>
+        <li>長期均線（MA20）反應 <strong>最慢、最平滑</strong></li>
+        <li>多根均線「向上排列」＝多頭排列（強勢）</li>
+        <li>多根均線「向下排列」＝空頭排列（弱勢）</li>
+      </ul>
+    </div>
+
+    <div class="panel info-box">
+      <h3>📋 操作記錄</h3>
+      <div class="log-box" id="logBox">
+        <div class="log-entry" style="color:#555">— 尚無操作 —</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+const INIT_PRICES = [100,102,101,103,105,104,106,108,107,109,110,108,107,109,111,113,112,114,116,115];
+let prices = [...INIT_PRICES];
+let basePrice = 100;
+
+function calcMA(arr, n) {
+  if (arr.length < n) return null;
+  return arr.slice(-n).reduce((a,b)=>a+b,0) / n;
+}
+
+function calcMALine(arr, n) {
+  const result = [];
+  for (let i = 0; i < arr.length; i++) {
+    if (i+1 >= n) {
+      result.push(arr.slice(i+1-n, i+1).reduce((a,b)=>a+b,0)/n);
+    } else {
+      result.push(null);
+    }
+  }
+  return result;
+}
+
+function drawChart() {
+  const canvas = document.getElementById('chart');
+  const W = canvas.offsetWidth * window.devicePixelRatio || 700;
+  const H = 320 * window.devicePixelRatio || 320;
+  canvas.width = W;
+  canvas.height = H;
+  const ctx = canvas.getContext('2d');
+  const scale = window.devicePixelRatio || 1;
+
+  const PAD = { left: 50*scale, right: 20*scale, top: 20*scale, bottom: 30*scale };
+  const chartW = W - PAD.left - PAD.right;
+  const chartH = H - PAD.top - PAD.bottom;
+
+  ctx.clearRect(0,0,W,H);
+
+  const all = prices;
+  const ma5  = calcMALine(all, 5);
+  const ma10 = calcMALine(all, 10);
+  const ma20 = calcMALine(all, 20);
+
+  const allVals = [
+    ...all,
+    ...ma5.filter(v=>v!==null),
+    ...ma10.filter(v=>v!==null),
+    ...ma20.filter(v=>v!==null)
+  ];
+  const minV = Math.min(...allVals) * 0.99;
+  const maxV = Math.max(...allVals) * 1.01;
+  const range = maxV - minV;
+
+  function xPos(i) { return PAD.left + (i / (all.length-1)) * chartW; }
+  function yPos(v) { return PAD.top + (1 - (v-minV)/range) * chartH; }
+
+  // Grid
+  ctx.strokeStyle = '#1e1e3a';
+  ctx.lineWidth = 1;
+  for (let g = 0; g <= 4; g++) {
+    const y = PAD.top + (g/4)*chartH;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(W-PAD.right, y); ctx.stroke();
+    const val = maxV - (g/4)*range;
+    ctx.fillStyle = '#555'; ctx.font = `${10*scale}px Arial`;
+    ctx.fillText(val.toFixed(0), 4*scale, y+4*scale);
+  }
+
+  // Price bars
+  all.forEach((p, i) => {
+    const x = xPos(i);
+    const prev = i > 0 ? all[i-1] : p;
+    const isUp = p >= prev;
+    ctx.fillStyle = isUp ? '#e74c3c' : '#2ecc71';
+    const barW = Math.max(2*scale, chartW / all.length * 0.6);
+    const barH = Math.max(2*scale, Math.abs(yPos(p) - yPos(prev)));
+    const barY = Math.min(yPos(p), yPos(prev));
+    ctx.fillRect(x - barW/2, barY, barW, barH);
+  });
+
+  // MA lines
+  function drawLine(data, color, width=2) {
+    ctx.strokeStyle = color;
+    ctx.lineWidth = width * scale;
+    ctx.beginPath();
+    let started = false;
+    data.forEach((v, i) => {
+      if (v === null) return;
+      const x = xPos(i), y = yPos(v);
+      if (!started) { ctx.moveTo(x,y); started=true; }
+      else ctx.lineTo(x,y);
+    });
+    ctx.stroke();
+  }
+
+  drawLine(ma20, '#ff6b9d', 1.5);
+  drawLine(ma10, '#ff9f43', 2);
+  drawLine(ma5,  '#7ec8e3', 2);
+
+  // Last price line
+  const last = all[all.length-1];
+  ctx.strokeStyle = '#f0c04044';
+  ctx.setLineDash([4*scale,4*scale]);
+  ctx.lineWidth = 1*scale;
+  ctx.beginPath();
+  ctx.moveTo(PAD.left, yPos(last));
+  ctx.lineTo(W-PAD.right, yPos(last));
+  ctx.stroke();
+  ctx.setLineDash([]);
+
+  // Update stats
+  const priceDiff = last - basePrice;
+  document.getElementById('statPrice').textContent = last.toFixed(2);
+  const chgEl = document.getElementById('statChg');
+  chgEl.textContent = (priceDiff >= 0 ? '+' : '') + priceDiff.toFixed(2);
+  chgEl.className = 'val ' + (priceDiff >= 0 ? 'up-color' : 'down-color');
+
+  const m5 = calcMA(all, 5);
+  const m10 = calcMA(all, 10);
+  document.getElementById('statMA5').textContent  = m5  ? m5.toFixed(2)  : '-';
+  document.getElementById('statMA10').textContent = m10 ? m10.toFixed(2) : '-';
+}
+
+document.getElementById('stepSize').addEventListener('input', function() {
+  document.getElementById('stepLabel').textContent = '±' + this.value + '%';
+});
+
+let logCount = 0;
+
+function addCandle(dir) {
+  const step = parseInt(document.getElementById('stepSize').value) / 100;
+  const last = prices[prices.length - 1];
+  // Add some randomness ± 30% of step
+  const rand = 1 + (Math.random() * 0.6 - 0.3);
+  const change = last * step * (dir === 'up' ? 1 : -1) * rand;
+  const newPrice = Math.max(1, last + change);
+  prices.push(newPrice);
+
+  // Log
+  logCount++;
+  const ma5 = calcMA(prices, 5);
+  const diff = newPrice - last;
+  const sign = diff > 0 ? '+' : '';
+  const entry = document.createElement('div');
+  entry.className = 'log-entry ' + dir;
+  entry.textContent = `#${logCount} ${dir === 'up' ? '▲上漲' : '▼下跌'} → ${newPrice.toFixed(2)}（${sign}${diff.toFixed(2)}）MA5: ${ma5 ? ma5.toFixed(2) : '-'}`;
+  const box = document.getElementById('logBox');
+  box.insertBefore(entry, box.firstChild);
+  if (box.children.length > 20) box.removeChild(box.lastChild);
+
+  drawChart();
+}
+
+function resetChart() {
+  prices = [...INIT_PRICES];
+  logCount = 0;
+  document.getElementById('logBox').innerHTML = '<div class="log-entry" style="color:#555">— 尚無操作 —</div>';
+  drawChart();
+}
+
+window.addEventListener('resize', drawChart);
+drawChart();
+</script>
+</body>
+</html>
