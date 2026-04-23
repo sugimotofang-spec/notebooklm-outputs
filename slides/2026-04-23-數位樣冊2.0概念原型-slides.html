@@ -890,39 +890,63 @@ function genTex(color, type, scale) {
   const r = parseInt(hex.slice(0,2),16);
   const g = parseInt(hex.slice(2,4),16);
   const b = parseInt(hex.slice(4,6),16);
-  ctx.fillStyle = color;
+  // Slightly desaturated base (more fabric-like, less saturated plastic)
+  const rb=Math.round(r*.85+32), gb=Math.round(g*.85+32), bb=Math.round(b*.85+32);
+  ctx.fillStyle=`rgb(${rb},${gb},${bb})`;
   ctx.fillRect(0,0,S,S);
-  const ps = Math.round(S / (28 / scale));
+  const ps=Math.round(S/(32/scale));
   if(type==='woven') {
+    // Horizontal yarns (slightly lighter)
     for(let i=0;i<S;i+=ps){
-      ctx.fillStyle=`rgba(${Math.max(r-40,0)},${Math.max(g-40,0)},${Math.max(b-40,0)},.6)`;
-      ctx.fillRect(i,0,Math.max(2,ps*.2),S);
-      ctx.fillRect(0,i,S,Math.max(2,ps*.2));
+      const yarnW=Math.max(2,ps*.55);
+      const grad=ctx.createLinearGradient(0,i,0,i+yarnW);
+      grad.addColorStop(0,  `rgba(255,255,255,.13)`);
+      grad.addColorStop(.5, `rgba(255,255,255,.04)`);
+      grad.addColorStop(1,  `rgba(0,0,0,.10)`);
+      ctx.fillStyle=grad; ctx.fillRect(0,i,S,yarnW);
     }
-    for(let i=ps*.5;i<S;i+=ps){
-      ctx.fillStyle='rgba(255,255,255,.14)';
-      ctx.fillRect(i,0,Math.max(1,ps*.1),S);
-      ctx.fillRect(0,i,S,Math.max(1,ps*.1));
+    // Vertical yarns (slightly darker, weave-under shadow)
+    for(let i=0;i<S;i+=ps){
+      const yarnW=Math.max(2,ps*.55);
+      const grad=ctx.createLinearGradient(i,0,i+yarnW,0);
+      grad.addColorStop(0,  `rgba(0,0,0,.14)`);
+      grad.addColorStop(.5, `rgba(0,0,0,.06)`);
+      grad.addColorStop(1,  `rgba(255,255,255,.10)`);
+      ctx.fillStyle=grad; ctx.fillRect(i,0,yarnW,S);
+    }
+    // Intersection shadow (where yarns cross)
+    for(let i=0;i<S;i+=ps) for(let j=0;j<S;j+=ps){
+      ctx.fillStyle='rgba(0,0,0,.12)';
+      ctx.fillRect(i,j,Math.max(1,ps*.22),Math.max(1,ps*.22));
     }
   } else if(type==='knit') {
-    const ks=ps*1.6;
+    const ks=ps*1.8;
     for(let row=0;row*ks<S+ks;row++){
-      for(let col=-1;col*ks<S+ks;col++){
-        const ox=col*ks+(row%2)*ks*.5, oy=row*ks;
+      for(let col=-1;col*(ks*.8)<S+ks;col++){
+        const ox=col*(ks*.8)+(row%2)*(ks*.4), oy=row*ks*.7;
+        // Upper loop (highlight)
         ctx.beginPath();
-        ctx.ellipse(ox+ks*.5,oy+ks*.35,ks*.42,ks*.27,0,Math.PI,2*Math.PI);
-        ctx.strokeStyle=`rgba(${Math.max(r-30,0)},${Math.max(g-30,0)},${Math.max(b-30,0)},.55)`;
-        ctx.lineWidth=1.8; ctx.stroke();
+        ctx.ellipse(ox+ks*.4,oy+ks*.3,ks*.36,ks*.22,0,Math.PI,2*Math.PI);
+        ctx.strokeStyle=`rgba(255,255,255,.18)`; ctx.lineWidth=2.5; ctx.stroke();
+        // Lower loop (shadow)
         ctx.beginPath();
-        ctx.ellipse(ox+ks*.5,oy+ks*.35,ks*.42,ks*.27,0,0,Math.PI);
-        ctx.strokeStyle='rgba(255,255,255,.11)'; ctx.stroke();
+        ctx.ellipse(ox+ks*.4,oy+ks*.3,ks*.36,ks*.22,0,0,Math.PI);
+        ctx.strokeStyle=`rgba(0,0,0,.18)`; ctx.lineWidth=2.0; ctx.stroke();
       }
     }
   } else {
-    const ms=Math.max(4,ps*.8), gw=ms*.65;
-    for(let i=0;i<S;i+=ms) for(let j=0;j<S;j+=ms){
-      ctx.strokeStyle=`rgba(${Math.max(r-45,0)},${Math.max(g-45,0)},${Math.max(b-45,0)},.72)`;
-      ctx.lineWidth=1.5; ctx.strokeRect(i+ms*.17,j+ms*.17,gw,gw);
+    // Mesh: open diamond grid, delicate lines
+    const ms=Math.max(5,ps*.9);
+    ctx.strokeStyle=`rgba(0,0,0,.28)`; ctx.lineWidth=1.2;
+    for(let i=0;i<S+ms;i+=ms){
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i-ms,S); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+ms,S); ctx.stroke();
+    }
+    // Light highlight lines
+    ctx.strokeStyle=`rgba(255,255,255,.12)`; ctx.lineWidth=0.8;
+    for(let i=ms*.5;i<S+ms;i+=ms){
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i-ms,S); ctx.stroke();
+      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+ms,S); ctx.stroke();
     }
   }
   return cv;
@@ -1009,23 +1033,36 @@ function initThreeJS(){
   function tryLoad(url,fb){
     loader.load(url,gltf=>{
       const model=gltf.scene;
+      // Scale & position
       const box=new THREE.Box3().setFromObject(model);
       const size=box.getSize(new THREE.Vector3());
       const sc=2.2/Math.max(size.x,size.y,size.z);
       const center=box.getCenter(new THREE.Vector3());
       model.scale.setScalar(sc);
       model.position.set(-center.x*sc,-box.min.y*sc,-center.z*sc);
+      scene.add(model);
+      // World-space bounds after positioning
+      const wBox=new THREE.Box3().setFromObject(model);
+      const wH=wBox.max.y-wBox.min.y;
+      const soleMats=[];
       model.traverse(child=>{
         if(!child.isMesh) return;
         child.castShadow=true; child.receiveShadow=true;
         const mats=Array.isArray(child.material)?child.material:[child.material];
-        mats.forEach(m=>{
-          const n=(m.name||'').toLowerCase();
-          if(!n.includes('sole')&&!n.includes('lace')&&!n.includes('rubber')&&!n.includes('logo'))
-            upperMats.push(m);
-        });
+        const nm=(mats[0]?.name||'').toLowerCase();
+        const cBox=new THREE.Box3().setFromObject(child);
+        const relY=((cBox.min.y+cBox.max.y)/2-wBox.min.y)/wH;
+        const isSole=nm.includes('sole')||nm.includes('rubber')||nm.includes('outsole')||relY<0.20;
+        const isLace=nm.includes('lace')||nm.includes('cord')||nm.includes('string');
+        if(isLace){/* keep original */}
+        else if(isSole){mats.forEach(m=>soleMats.push(m));}
+        else{mats.forEach(m=>upperMats.push(m));}
       });
-      scene.add(model);
+      // White midsole / off-white sole
+      soleMats.forEach(m=>{
+        m.map=null; m.color.set(0xf4f2ee);
+        m.roughness=0.88; m.metalness=0; m.needsUpdate=true;
+      });
       apply3dFabric();
       const el=document.getElementById('v3d-loading');
       if(el) el.style.display='none';
