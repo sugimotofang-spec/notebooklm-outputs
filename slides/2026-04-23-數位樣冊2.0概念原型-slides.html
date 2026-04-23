@@ -116,10 +116,12 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
   pointer-events:none;
   transition:background .35s, opacity .35s;
 }
-/* Fabric texture overlay in soft-light: adds subtle surface structure */
+/* Fabric texture overlay in overlay mode: creates physical weave/knit structure.
+   overlay = lighten light parts, darken dark parts of the grayscale pattern.
+   Combined with the color layer below, this renders the textile surface on the shoe. */
 .ov-tex{
   position:absolute;inset:0;
-  mix-blend-mode:soft-light;
+  mix-blend-mode:overlay;
   border-radius:12px;
   pointer-events:none;
   transition:opacity .3s;
@@ -134,10 +136,44 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
   transition:opacity .3s;
 }
 
-/* Texture patterns for ov-tex */
-.tex-woven-pat{background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.18) 0,rgba(0,0,0,.18) 1.5px,transparent 1.5px,transparent 6px),repeating-linear-gradient(-45deg,rgba(0,0,0,.12) 0,rgba(0,0,0,.12) 1.5px,transparent 1.5px,transparent 6px)}
-.tex-knit-pat{background-image:radial-gradient(ellipse 6px 4px at 6px 4px,rgba(0,0,0,.2) 40%,transparent 40%),radial-gradient(ellipse 6px 4px at 0 0,rgba(0,0,0,.12) 40%,transparent 40%);background-size:12px 8px}
-.tex-mesh-pat{background-image:linear-gradient(rgba(0,0,0,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.14) 1px,transparent 1px);background-size:5px 5px}
+/* Texture patterns for ov-tex (overlay blend mode)
+   Use high-contrast grayscale (white=lighten, black=darken) so the weave/knit
+   structure is physically visible on the shoe surface under any fabric color. */
+
+/* WOVEN: interlocking horizontal + vertical thread highlights & shadows */
+.tex-woven-pat{
+  background-image:
+    repeating-linear-gradient(0deg,
+      rgba(255,255,255,.55) 0,rgba(255,255,255,.55) 1.5px,
+      rgba(0,0,0,.45)       1.5px,rgba(0,0,0,.45) 3px,
+      transparent 3px, transparent 7px),
+    repeating-linear-gradient(90deg,
+      rgba(255,255,255,.45) 0,rgba(255,255,255,.45) 1.5px,
+      rgba(0,0,0,.35)       1.5px,rgba(0,0,0,.35) 3px,
+      transparent 3px, transparent 7px);
+  background-size:7px 7px;
+}
+
+/* KNIT: oval loops — raised bump highlights with cast shadows */
+.tex-knit-pat{
+  background-image:
+    radial-gradient(ellipse 8px 6px at 4px 3px,
+      rgba(255,255,255,.6) 30%, rgba(0,0,0,.35) 65%, transparent 65%),
+    radial-gradient(ellipse 8px 6px at 12px 9px,
+      rgba(255,255,255,.6) 30%, rgba(0,0,0,.35) 65%, transparent 65%);
+  background-size:16px 12px;
+}
+
+/* MESH: grid openings — dark frame lines + inner highlight */
+.tex-mesh-pat{
+  background-image:
+    linear-gradient(rgba(0,0,0,.55) 1.5px, transparent 1.5px),
+    linear-gradient(90deg, rgba(0,0,0,.55) 1.5px, transparent 1.5px),
+    linear-gradient(rgba(255,255,255,.25) .5px, transparent .5px),
+    linear-gradient(90deg, rgba(255,255,255,.25) .5px, transparent .5px);
+  background-size:6px 6px, 6px 6px, 6px 6px, 6px 6px;
+  background-position:0 0, 0 0, 3px 3px, 3px 3px;
+}
 
 /* float annotation tags */
 .float-tag{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.09);display:flex;align-items:center;gap:5px;white-space:nowrap;z-index:10}
@@ -153,10 +189,22 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .stage3d{background:linear-gradient(135deg,#0d1b2a,#1b2f50,#0f3460);border-radius:16px;display:flex;align-items:center;justify-content:center;min-height:500px;position:relative;overflow:hidden}
 .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
 .glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(43,181,200,.13) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-.scene{perspective:1200px;position:relative;z-index:1}
-.shoe3d{transform-style:preserve-3d;animation:rot3d 9s linear infinite;cursor:pointer}
+.scene{perspective:650px;position:relative;z-index:1}
+.shoe3d{transform-style:preserve-3d;animation:rot3d 10s ease-in-out infinite;cursor:pointer}
 .shoe3d:hover{animation-play-state:paused}
-@keyframes rot3d{0%{transform:rotateY(0deg) rotateX(5deg)}100%{transform:rotateY(360deg) rotateX(5deg)}}
+/* Rocking motion: ±55° rotateY keeps shoe always visible (no edge-on disappear).
+   rotateX oscillation adds genuine up/down tilt — the key to 3D depth feel. */
+@keyframes rot3d{
+  0%  {transform:rotateY(0deg)   rotateX(12deg) scale(1.00)}
+  18% {transform:rotateY(52deg)  rotateX(5deg)  scale(0.96)}
+  28% {transform:rotateY(55deg)  rotateX(3deg)  scale(0.95)}
+  38% {transform:rotateY(48deg)  rotateX(6deg)  scale(0.96)}
+  50% {transform:rotateY(0deg)   rotateX(18deg) scale(1.02)}
+  62% {transform:rotateY(-48deg) rotateX(6deg)  scale(0.96)}
+  72% {transform:rotateY(-55deg) rotateX(3deg)  scale(0.95)}
+  82% {transform:rotateY(-52deg) rotateX(5deg)  scale(0.96)}
+  100%{transform:rotateY(0deg)   rotateX(12deg) scale(1.00)}
+}
 .shoe-shadow{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%) rotateX(90deg);width:380px;height:50px;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,transparent 70%);border-radius:50%}
 .angle-bar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
 .ang-btn{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);transition:background .2s}
@@ -647,9 +695,9 @@ function activateShoeViewer(){
 */
 function applyOverlays(){
   const f=fab();if(!f||!shoeImgSrc)return;
-  const colorOp  = 0.38 + (params.sat  /100)*0.48;  // 0.38–0.86
-  const texOp    = (params.tex  /100)*0.28;           // 0–0.28
-  const glossOp  = (params.gloss/100)*0.40;           // 0–0.40
+  const colorOp  = 0.35 + (params.sat  /100)*0.50;  // 0.35–0.85
+  const texOp    = 0.25 + (params.tex  /100)*0.40;  // 0.25–0.65  (always visible)
+  const glossOp  = (params.gloss/100)*0.42;           // 0–0.42
   const texClass = texPatClass(f.tex);
   ['sim','3d'].forEach(sfx=>{
     const c=document.getElementById(`ov-color-${sfx}`);
@@ -789,7 +837,7 @@ function setAngle(a,btn){
   document.querySelectorAll('.ang-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const s=document.getElementById('shoe3d');
-  const map={front:'rotateY(0deg) rotateX(5deg)',side:'rotateY(90deg) rotateX(5deg)',top:'rotateY(30deg) rotateX(60deg)',back:'rotateY(180deg) rotateX(5deg)'};
+  const map={front:'rotateY(0deg) rotateX(12deg)',side:'rotateY(55deg) rotateX(5deg)',top:'rotateX(65deg) rotateY(20deg)',back:'rotateY(170deg) rotateX(8deg)'};
   s.style.animation='none';s.style.transform=map[a];
   rotating=false;
   document.getElementById('rot-btn').textContent=t('play');
