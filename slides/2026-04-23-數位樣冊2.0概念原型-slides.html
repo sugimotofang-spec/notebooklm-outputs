@@ -3,514 +3,251 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>TLC 數位樣冊 2.0 — 概念原型</title>
+<title>TLC 數位樣冊 2.0</title>
 <style>
 :root {
-  --blue: #1a5fa8;
-  --teal: #2bb5c8;
-  --orange: #e07030;
-  --bg: #f0f2f6;
-  --card: #ffffff;
-  --text: #1a1a2e;
-  --muted: #6b7280;
-  --border: #e5e7eb;
-  --green: #10b981;
-  --red: #ef4444;
-  --amber: #f59e0b;
+  --blue:#1a5fa8; --teal:#2bb5c8; --bg:#f0f2f6;
+  --card:#fff; --text:#1a1a2e; --muted:#6b7280; --border:#e5e7eb;
+  --green:#10b981; --red:#ef4444; --amber:#f59e0b;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body {
-  font-family: -apple-system, 'Segoe UI', 'Microsoft JhengHei', 'PingFang TC', sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  min-height: 100vh;
-  overflow-x: hidden;
-}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:-apple-system,'Segoe UI','Microsoft JhengHei','PingFang TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-/* ── HEADER ── */
-header {
-  background: #fff;
-  border-bottom: 1px solid var(--border);
-  padding: 10px 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 1px 6px rgba(0,0,0,0.07);
-}
-.logo { display: flex; align-items: center; gap: 10px; }
-.logo-svg { width: 38px; height: 38px; }
-.logo-name { font-size: 17px; font-weight: 800; color: var(--blue); letter-spacing: -0.5px; }
-.logo-sub  { font-size: 11px; color: var(--muted); font-weight: 500; margin-top: 1px; }
-.badge {
-  background: linear-gradient(135deg, var(--blue), var(--teal));
-  color: #fff; font-size: 10px; font-weight: 700;
-  padding: 3px 9px; border-radius: 20px; letter-spacing: 0.8px;
-}
-.search-wrap {
-  display: flex; align-items: center; gap: 8px;
-  background: var(--bg); border: 1px solid var(--border);
-  border-radius: 8px; padding: 7px 14px; width: 240px;
-}
-.search-wrap input {
-  border: none; background: none; outline: none;
-  font-size: 13px; width: 100%; color: var(--text);
-}
+/* HEADER */
+header{background:#fff;border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,.07)}
+.logo{display:flex;align-items:center;gap:10px}
+.logo-name{font-size:17px;font-weight:800;color:var(--blue)}
+.logo-sub{font-size:11px;color:var(--muted);font-weight:500;margin-top:1px}
+.badge{background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;font-size:10px;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:.8px}
+.header-right{display:flex;align-items:center;gap:12px}
+.search-wrap{display:flex;align-items:center;gap:8px;background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;width:230px}
+.search-wrap input{border:none;background:none;outline:none;font-size:13px;width:100%;color:var(--text)}
+.lang-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--blue)}
+.lang-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-/* ── NAV ── */
-nav {
-  background: #fff; border-bottom: 1px solid var(--border);
-  padding: 0 24px; display: flex; gap: 0;
-}
-.tab-btn {
-  padding: 13px 22px; border: none; background: none;
-  cursor: pointer; font-size: 14px; font-weight: 500;
-  color: var(--muted); border-bottom: 3px solid transparent;
-  transition: all 0.2s; display: flex; align-items: center; gap: 7px;
-}
-.tab-btn.active { color: var(--blue); border-bottom-color: var(--blue); }
-.tab-btn:hover  { color: var(--blue); background: rgba(26,95,168,0.04); }
+/* NAV */
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0}
+.tab-btn{padding:13px 22px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px}
+.tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
+.tab-btn:hover{color:var(--blue);background:rgba(26,95,168,.04)}
 
-/* ── MAIN ── */
-.main { max-width: 1440px; margin: 0 auto; padding: 24px; }
-.panel { display: none; }
-.panel.active { display: block; }
+/* MAIN */
+.main{max-width:1440px;margin:0 auto;padding:24px}
+.panel{display:none}.panel.active{display:block}
 
-/* ── CHIPS / FILTERS ── */
-.toolbar {
-  display: flex; align-items: center;
-  justify-content: space-between; margin-bottom: 20px; flex-wrap: wrap; gap: 10px;
-}
-.chips { display: flex; gap: 8px; flex-wrap: wrap; }
-.chip {
-  padding: 6px 14px; border-radius: 20px;
-  border: 1px solid var(--border); background: #fff;
-  font-size: 12px; cursor: pointer; font-weight: 500; transition: all 0.2s;
-}
-.chip.active, .chip:hover { background: var(--blue); color: #fff; border-color: var(--blue); }
+/* CHIPS */
+.toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
+.chips{display:flex;gap:8px;flex-wrap:wrap}
+.chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;font-weight:500;transition:all .2s}
+.chip.active,.chip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-/* ── FABRIC GRID ── */
-.fabric-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(255px, 1fr));
-  gap: 18px;
-}
-.fabric-card {
-  background: #fff; border-radius: 12px; overflow: hidden;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  cursor: pointer; transition: all 0.25s;
-  border: 2px solid transparent;
-}
-.fabric-card:hover { transform: translateY(-3px); box-shadow: 0 8px 24px rgba(0,0,0,0.11); border-color: var(--blue); }
-.fabric-card.selected { border-color: var(--blue); box-shadow: 0 0 0 3px rgba(26,95,168,0.14); }
-.swatch {
-  height: 155px; position: relative; overflow: hidden;
-}
-.tex-woven {
-  background-color: var(--sc);
-  background-image:
-    repeating-linear-gradient(45deg,  rgba(255,255,255,0.09) 0,rgba(255,255,255,0.09) 2px, transparent 2px, transparent 9px),
-    repeating-linear-gradient(-45deg, rgba(0,0,0,0.07)       0,rgba(0,0,0,0.07)       2px, transparent 2px, transparent 9px);
-}
-.tex-knit {
-  background-color: var(--sc);
-  background-image:
-    radial-gradient(ellipse 7px 5px at 7px 5px, rgba(255,255,255,0.16) 40%, transparent 40%),
-    radial-gradient(ellipse 7px 5px at 0   0,   rgba(0,0,0,0.09)       40%, transparent 40%);
-  background-size: 14px 10px;
-}
-.tex-mesh {
-  background-color: var(--sc);
-  background-image:
-    linear-gradient(rgba(255,255,255,0.13) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.13) 1px, transparent 1px);
-  background-size: 7px 7px;
-}
-.swatch-badge {
-  position: absolute; top: 9px; right: 9px;
-  background: rgba(255,255,255,0.93); border-radius: 6px;
-  padding: 3px 8px; font-size: 11px; font-weight: 700; color: var(--blue);
-}
-.recycle-tag {
-  position: absolute; top: 9px; left: 9px;
-  background: rgba(16,185,129,0.88); color: #fff;
-  border-radius: 6px; padding: 3px 7px;
-  font-size: 10px; font-weight: 600; display: flex; align-items: center; gap: 3px;
-}
-.card-body { padding: 13px 15px; }
-.card-name { font-size: 15px; font-weight: 700; margin-bottom: 3px; }
-.card-code { font-size: 11px; color: var(--muted); margin-bottom: 9px; font-family: monospace; }
-.card-specs { display: grid; grid-template-columns: 1fr 1fr; gap: 5px; font-size: 11px; }
-.spec-k { color: var(--muted); }
-.spec-v { font-weight: 600; }
-.card-foot {
-  margin-top: 10px; padding-top: 10px;
-  border-top: 1px solid var(--border);
-  display: flex; justify-content: space-between; align-items: center;
-}
-.price { font-size: 14px; font-weight: 700; color: var(--blue); }
-.sim-btn {
-  background: var(--blue); color: #fff; border: none;
-  border-radius: 6px; padding: 5px 12px; font-size: 12px;
-  cursor: pointer; font-weight: 600; transition: background 0.2s;
-}
-.sim-btn:hover { background: #1249a0; }
+/* FABRIC GRID */
+.fabric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:18px}
+.fabric-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:all .25s;border:2px solid transparent}
+.fabric-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.11);border-color:var(--blue)}
+.fabric-card.selected{border-color:var(--blue);box-shadow:0 0 0 3px rgba(26,95,168,.14)}
+.swatch{height:155px;position:relative;overflow:hidden}
+.tx-woven{background-color:var(--sc);background-image:repeating-linear-gradient(45deg,rgba(255,255,255,.09) 0,rgba(255,255,255,.09) 2px,transparent 2px,transparent 9px),repeating-linear-gradient(-45deg,rgba(0,0,0,.07) 0,rgba(0,0,0,.07) 2px,transparent 2px,transparent 9px)}
+.tx-knit{background-color:var(--sc);background-image:radial-gradient(ellipse 7px 5px at 7px 5px,rgba(255,255,255,.16) 40%,transparent 40%),radial-gradient(ellipse 7px 5px at 0 0,rgba(0,0,0,.09) 40%,transparent 40%);background-size:14px 10px}
+.tx-mesh{background-color:var(--sc);background-image:linear-gradient(rgba(255,255,255,.13) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.13) 1px,transparent 1px);background-size:7px 7px}
+.sw-badge{position:absolute;top:9px;right:9px;background:rgba(255,255,255,.93);border-radius:6px;padding:3px 8px;font-size:11px;font-weight:700;color:var(--blue)}
+.rec-tag{position:absolute;top:9px;left:9px;background:rgba(16,185,129,.88);color:#fff;border-radius:6px;padding:3px 7px;font-size:10px;font-weight:600;display:flex;align-items:center;gap:3px}
+.card-body{padding:13px 15px}
+.card-name{font-size:15px;font-weight:700;margin-bottom:3px}
+.card-code{font-size:11px;color:var(--muted);margin-bottom:9px;font-family:monospace}
+.card-specs{display:grid;grid-template-columns:1fr 1fr;gap:5px;font-size:11px}
+.sk{color:var(--muted)}.sv{font-weight:600}
+.card-foot{margin-top:10px;padding-top:10px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.price{font-size:14px;font-weight:700;color:var(--blue)}
+.sim-btn{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600;transition:background .2s}
+.sim-btn:hover{background:#1249a0}
 
-/* ── SIMULATOR ── */
-.sim-layout { display: grid; grid-template-columns: 270px 1fr; gap: 22px; }
-.sidebar {
-  background: #fff; border-radius: 12px; padding: 18px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  display: flex; flex-direction: column; gap: 16px;
-}
-.section-label {
-  font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1px; color: var(--muted); margin-bottom: 8px;
-}
-.mini-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
-.mini-sw {
-  border-radius: 8px; aspect-ratio: 1; cursor: pointer;
-  border: 2px solid transparent; transition: all 0.2s;
-  position: relative; overflow: hidden;
-  background-color: var(--sc);
-}
-.mini-sw.active { border-color: var(--blue); box-shadow: 0 0 0 2px rgba(26,95,168,0.22); }
-.mini-sw span {
-  position: absolute; bottom: 0; left: 0; right: 0;
-  text-align: center; font-size: 9px; font-weight: 600;
-  background: rgba(255,255,255,0.86); padding: 3px 0;
-}
-.prod-btns { display: flex; gap: 7px; }
-.prod-btn {
-  flex: 1; padding: 8px 4px; border: 1.5px solid var(--border);
-  border-radius: 8px; background: #fff; cursor: pointer;
-  text-align: center; font-size: 11px; font-weight: 600;
-  color: var(--muted); transition: all 0.2s;
-}
-.prod-btn.active { border-color: var(--blue); color: var(--blue); background: rgba(26,95,168,0.05); }
-.prod-btn .icon { font-size: 20px; display: block; margin-bottom: 4px; }
-.divider { height: 1px; background: var(--border); }
-.param-row { margin-bottom: 12px; }
-.param-lbl { display: flex; justify-content: space-between; font-size: 12px; font-weight: 600; margin-bottom: 5px; }
-.param-val { color: var(--blue); font-weight: 700; }
-input[type=range] { width: 100%; accent-color: var(--blue); cursor: pointer; }
-.gen-btn {
-  width: 100%; padding: 10px; background: linear-gradient(135deg, var(--blue), var(--teal));
-  color: #fff; border: none; border-radius: 8px; font-size: 13px;
-  font-weight: 700; cursor: pointer; transition: opacity 0.2s;
-}
-.gen-btn:hover { opacity: 0.88; }
+/* SIMULATOR */
+.sim-layout{display:grid;grid-template-columns:270px 1fr;gap:22px}
+.sidebar{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:16px}
+.sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
+.mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.mini-sw{border-radius:8px;aspect-ratio:1;cursor:pointer;border:2px solid transparent;transition:all .2s;position:relative;overflow:hidden;background-color:var(--sc)}
+.mini-sw.active{border-color:var(--blue);box-shadow:0 0 0 2px rgba(26,95,168,.22)}
+.mini-sw span{position:absolute;bottom:0;left:0;right:0;text-align:center;font-size:9px;font-weight:600;background:rgba(255,255,255,.86);padding:3px 0}
+.divider{height:1px;background:var(--border)}
+.param-row{margin-bottom:12px}
+.param-lbl{display:flex;justify-content:space-between;font-size:12px;font-weight:600;margin-bottom:5px}
+.param-val{color:var(--blue);font-weight:700}
+input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
+.gen-btn{width:100%;padding:10px;background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;transition:opacity .2s}
+.gen-btn:hover{opacity:.88}
+.sim-main{background:#fff;border-radius:12px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;overflow:hidden}
+.sim-toolbar{padding:13px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.sim-fab{display:flex;align-items:center;gap:11px}
+.sim-preview{width:38px;height:38px;border-radius:6px;border:1px solid var(--border);background-color:var(--sc)}
+.sim-fname{font-weight:700;font-size:15px}.sim-fcode{font-size:11px;color:var(--muted)}
+.act-btns{display:flex;gap:7px}
+.act-btn{padding:7px 14px;border-radius:7px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:all .2s;display:flex;align-items:center;gap:5px}
+.act-btn:hover{border-color:var(--blue);color:var(--blue)}
+.act-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
+.act-btn.primary:hover{background:#1249a0}
+.product-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:linear-gradient(135deg,#f8fafc,#eef2f7);position:relative;min-height:380px}
+.prod-wrap{position:relative;filter:drop-shadow(0 12px 28px rgba(0,0,0,.18));transition:transform .3s}
+.prod-wrap:hover{transform:scale(1.02)}
+.float-tag{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.09);display:flex;align-items:center;gap:5px;white-space:nowrap}
+.float-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+.gen-overlay{position:absolute;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:600;color:var(--blue);opacity:0;pointer-events:none;transition:opacity .3s;border-radius:12px}
+.gen-overlay.show{opacity:1;pointer-events:all}
+.spinner{width:34px;height:34px;border:3px solid rgba(26,95,168,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
 
-.sim-main {
-  background: #fff; border-radius: 12px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-  display: flex; flex-direction: column; overflow: hidden;
-}
-.sim-toolbar {
-  padding: 13px 18px; border-bottom: 1px solid var(--border);
-  display: flex; align-items: center; justify-content: space-between;
-}
-.sim-fab { display: flex; align-items: center; gap: 11px; }
-.sim-preview {
-  width: 38px; height: 38px; border-radius: 6px;
-  border: 1px solid var(--border);
-  background-color: var(--sc);
-}
-.sim-fname { font-weight: 700; font-size: 15px; }
-.sim-fcode { font-size: 11px; color: var(--muted); }
-.act-btns { display: flex; gap: 7px; }
-.act-btn {
-  padding: 7px 14px; border-radius: 7px; border: 1.5px solid var(--border);
-  background: #fff; font-size: 12px; font-weight: 600;
-  cursor: pointer; transition: all 0.2s; display: flex; align-items: center; gap: 5px;
-}
-.act-btn:hover { border-color: var(--blue); color: var(--blue); }
-.act-btn.primary { background: var(--blue); color: #fff; border-color: var(--blue); }
-.act-btn.primary:hover { background: #1249a0; }
-.product-stage {
-  flex: 1; display: flex; align-items: center; justify-content: center;
-  padding: 32px; background: linear-gradient(135deg, #f8fafc, #eef2f7);
-  position: relative; min-height: 380px;
-}
-.prod-wrap {
-  position: relative;
-  filter: drop-shadow(0 12px 28px rgba(0,0,0,0.18));
-  transition: transform 0.3s;
-}
-.prod-wrap:hover { transform: scale(1.02); }
-.float-tag {
-  position: absolute; background: #fff;
-  border: 1px solid var(--border); border-radius: 8px;
-  padding: 5px 10px; font-size: 11px; font-weight: 600;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.09);
-  display: flex; align-items: center; gap: 5px; white-space: nowrap;
-}
-.float-tag::before {
-  content: ''; width: 7px; height: 7px; border-radius: 50%;
-  background: var(--blue); flex-shrink: 0;
-}
-.gen-overlay {
-  position: absolute; inset: 0;
-  background: rgba(255,255,255,0.92);
-  display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 12px;
-  font-size: 14px; font-weight: 600; color: var(--blue);
-  opacity: 0; pointer-events: none; transition: opacity 0.3s; border-radius: 12px;
-}
-.gen-overlay.show { opacity: 1; pointer-events: all; }
-.spinner {
-  width: 34px; height: 34px;
-  border: 3px solid rgba(26,95,168,0.2);
-  border-top-color: var(--blue); border-radius: 50%;
-  animation: spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform: rotate(360deg); } }
+/* 3D */
+.v3d-layout{display:grid;grid-template-columns:1fr 300px;gap:22px}
+.stage3d{background:linear-gradient(135deg,#0d1b2a,#1b2f50,#0f3460);border-radius:16px;display:flex;align-items:center;justify-content:center;min-height:500px;position:relative;overflow:hidden}
+.grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
+.glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(43,181,200,.13) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
+.scene{perspective:1000px;position:relative;z-index:1}
+.shoe3d{transform-style:preserve-3d;animation:rot3d 9s linear infinite;cursor:pointer}
+.shoe3d:hover{animation-play-state:paused}
+@keyframes rot3d{0%{transform:rotateY(0deg) rotateX(6deg)}100%{transform:rotateY(360deg) rotateX(6deg)}}
+.shoe-shadow{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%) rotateX(90deg);width:350px;height:50px;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,transparent 70%);border-radius:50%}
+.angle-bar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
+.ang-btn{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);transition:background .2s}
+.ang-btn.active,.ang-btn:hover{background:rgba(26,95,168,.65)}
+.info-cards{display:flex;flex-direction:column;gap:14px}
+.icard{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.icard-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:11px}
+.spec-grid{display:grid;grid-template-columns:1fr 1fr;gap:9px;font-size:12px}
+.spec-grid .k{color:var(--muted);margin-bottom:1px}.spec-grid .v{font-weight:700}
+.color-row{display:flex;gap:7px;flex-wrap:wrap}
+.col-btn{width:30px;height:30px;border-radius:8px;cursor:pointer;border:2px solid transparent;transition:all .2s}
+.col-btn.active{border-color:var(--blue);transform:scale(1.18)}
+.cert-row{display:flex;flex-direction:column;gap:7px}
+.cert-item{display:flex;align-items:center;gap:8px;font-size:12px}
+.cert-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;color:#fff;flex-shrink:0}
 
-/* ── 3D VIEW ── */
-.view3d-layout { display: grid; grid-template-columns: 1fr 300px; gap: 22px; }
-.stage3d {
-  background: linear-gradient(135deg, #0d1b2a, #1b2f50, #0f3460);
-  border-radius: 16px; display: flex; align-items: center;
-  justify-content: center; min-height: 500px; position: relative; overflow: hidden;
-}
-.grid-bg {
-  position: absolute; inset: 0;
-  background-image:
-    linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px),
-    linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px);
-  background-size: 40px 40px;
-}
-.glow {
-  position: absolute; width: 420px; height: 420px; border-radius: 50%;
-  background: radial-gradient(circle, rgba(43,181,200,0.13) 0%, transparent 70%);
-  top: 50%; left: 50%; transform: translate(-50%,-50%);
-  pointer-events: none;
-}
-.scene { perspective: 1000px; position: relative; z-index: 1; }
-.shoe3d {
-  transform-style: preserve-3d;
-  animation: rot3d 9s linear infinite;
-  cursor: pointer;
-}
-.shoe3d:hover { animation-play-state: paused; }
-@keyframes rot3d {
-  0%   { transform: rotateY(0deg)   rotateX(6deg); }
-  100% { transform: rotateY(360deg) rotateX(6deg); }
-}
-.shoe-shadow {
-  position: absolute; bottom: -28px; left: 50%;
-  transform: translateX(-50%) rotateX(90deg);
-  width: 280px; height: 50px;
-  background: radial-gradient(ellipse, rgba(0,0,0,0.45) 0%, transparent 70%);
-  border-radius: 50%;
-}
-.angle-bar {
-  position: absolute; bottom: 18px; left: 50%;
-  transform: translateX(-50%); display: flex; gap: 7px; z-index: 10;
-}
-.ang-btn {
-  background: rgba(255,255,255,0.13); color: #fff;
-  border: 1px solid rgba(255,255,255,0.2); border-radius: 6px;
-  padding: 6px 14px; font-size: 11px; cursor: pointer;
-  backdrop-filter: blur(8px); transition: background 0.2s;
-}
-.ang-btn.active, .ang-btn:hover { background: rgba(26,95,168,0.65); }
-.info-cards { display: flex; flex-direction: column; gap: 14px; }
-.icard {
-  background: #fff; border-radius: 12px; padding: 16px;
-  box-shadow: 0 1px 4px rgba(0,0,0,0.06);
-}
-.icard-title {
-  font-size: 11px; font-weight: 700; text-transform: uppercase;
-  letter-spacing: 1px; color: var(--muted); margin-bottom: 11px;
-}
-.spec-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 9px; font-size: 12px; }
-.spec-grid .k { color: var(--muted); margin-bottom: 1px; }
-.spec-grid .v { font-weight: 700; }
-.color-row { display: flex; gap: 7px; flex-wrap: wrap; }
-.col-btn {
-  width: 30px; height: 30px; border-radius: 8px;
-  cursor: pointer; border: 2px solid transparent; transition: all 0.2s;
-}
-.col-btn.active { border-color: var(--blue); transform: scale(1.18); }
-.cert-row { display: flex; flex-direction: column; gap: 7px; }
-.cert-item { display: flex; align-items: center; gap: 8px; font-size: 12px; }
-.cert-tag {
-  font-size: 10px; font-weight: 700; padding: 2px 7px;
-  border-radius: 4px; color: #fff; flex-shrink: 0;
-}
+/* COMPARISON */
+.comp-header{text-align:center;margin-bottom:28px}
+.comp-title{font-size:26px;font-weight:800;margin-bottom:7px}
+.comp-sub{color:var(--muted);font-size:14px}
+.comp-grid{display:grid;grid-template-columns:200px repeat(3,1fr);border-radius:14px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.09);margin-bottom:28px}
+.ch{padding:18px 14px;text-align:center;font-weight:700;font-size:14px}
+.ch-empty{background:#f3f4f6}.ch-cur{background:#f3f4f6;color:var(--muted)}.ch-front{background:#fff7ed;color:#c2410c}
+.ch-vision{background:linear-gradient(135deg,var(--blue),var(--teal));color:#fff}
+.ch .ver{font-size:10px;font-weight:500;opacity:.65;margin-top:2px}
+.cat-row{grid-column:1/-1;background:var(--bg);padding:9px 14px;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);border-bottom:1px solid var(--border)}
+.cf{padding:13px 14px;font-size:12px;font-weight:600;background:#fff;border-right:1px solid var(--border);border-bottom:1px solid var(--border)}
+.cv{padding:13px 10px;text-align:center;font-size:12px;background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:center;gap:5px}
+.cv.fr{background:#fffbf5}.cv.vi{background:#f0f6ff}
+.yes{color:var(--green);font-size:15px}.no{color:var(--red);font-size:15px}.par{color:var(--amber);font-size:15px}
+.roadmap{background:#fff;border-radius:14px;padding:26px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
+.rm-title{font-size:17px;font-weight:800;margin-bottom:20px}
+.phases{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+.phase{border-radius:12px;padding:18px;border:2px solid}
+.p1{border-color:#10b981;background:#f0fdf4}.p2{border-color:#3b82f6;background:#eff6ff}.p3{border-color:#8b5cf6;background:#faf5ff}
+.ph-header{display:flex;align-items:center;gap:9px;margin-bottom:11px}
+.ph-tag{font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;color:#fff}
+.p1 .ph-tag{background:#10b981}.p2 .ph-tag{background:#3b82f6}.p3 .ph-tag{background:#8b5cf6}
+.ph-name{font-size:13px;font-weight:700}
+.ph-list{list-style:none;display:flex;flex-direction:column;gap:5px}
+.ph-list li{font-size:12px;padding-left:15px;position:relative}
+.ph-list li::before{content:'→';position:absolute;left:0;color:var(--muted)}
 
-/* ── COMPARISON ── */
-.comp-header { text-align: center; margin-bottom: 28px; }
-.comp-title { font-size: 26px; font-weight: 800; margin-bottom: 7px; }
-.comp-sub   { color: var(--muted); font-size: 14px; }
-.comp-grid {
-  display: grid; grid-template-columns: 200px repeat(3, 1fr);
-  border-radius: 14px; overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.09); margin-bottom: 28px;
-}
-.ch { padding: 18px 14px; text-align: center; font-weight: 700; font-size: 14px; }
-.ch-empty  { background: #f3f4f6; }
-.ch-cur    { background: #f3f4f6; color: var(--muted); }
-.ch-front  { background: #fff7ed; color: #c2410c; }
-.ch-vision { background: linear-gradient(135deg, var(--blue), var(--teal)); color: #fff; }
-.ch .ver   { font-size: 10px; font-weight: 500; opacity: 0.65; margin-top: 2px; }
-.cat-row {
-  grid-column: 1 / -1; background: var(--bg);
-  padding: 9px 14px; font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 1.5px; color: var(--muted);
-  border-bottom: 1px solid var(--border);
-}
-.cf  { padding: 13px 14px; font-size: 12px; font-weight: 600; background: #fff; border-right: 1px solid var(--border); border-bottom: 1px solid var(--border); }
-.cv  { padding: 13px 10px; text-align: center; font-size: 12px; background: #fff; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: center; gap: 5px; }
-.cv.fr { background: #fffbf5; }
-.cv.vi { background: #f0f6ff; }
-.yes { color: var(--green); font-size: 15px; }
-.no  { color: var(--red);   font-size: 15px; }
-.par { color: var(--amber); font-size: 15px; }
-
-/* Roadmap */
-.roadmap { background: #fff; border-radius: 14px; padding: 26px; box-shadow: 0 1px 4px rgba(0,0,0,0.06); }
-.rm-title { font-size: 17px; font-weight: 800; margin-bottom: 20px; }
-.phases   { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; }
-.phase    { border-radius: 12px; padding: 18px; border: 2px solid; }
-.p1 { border-color: #10b981; background: #f0fdf4; }
-.p2 { border-color: #3b82f6; background: #eff6ff; }
-.p3 { border-color: #8b5cf6; background: #faf5ff; }
-.ph-header { display: flex; align-items: center; gap: 9px; margin-bottom: 11px; }
-.ph-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; color: #fff; }
-.p1 .ph-tag { background: #10b981; }
-.p2 .ph-tag { background: #3b82f6; }
-.p3 .ph-tag { background: #8b5cf6; }
-.ph-name { font-size: 13px; font-weight: 700; }
-.ph-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
-.ph-list li { font-size: 12px; padding-left: 15px; position: relative; }
-.ph-list li::before { content: '→'; position: absolute; left: 0; color: var(--muted); }
-
-/* Toast */
-.toast {
-  position: fixed; bottom: 22px; right: 22px;
-  background: #1a1a2e; color: #fff;
-  padding: 11px 18px; border-radius: 9px; font-size: 13px; font-weight: 500;
-  z-index: 999; opacity: 0; transform: translateY(8px);
-  transition: all 0.28s; pointer-events: none;
-}
-.toast.show { opacity: 1; transform: translateY(0); }
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:999;opacity:0;transform:translateY(8px);transition:all .28s;pointer-events:none}
+.toast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- ── HEADER ── -->
 <header>
   <div class="logo">
-    <svg class="logo-svg" viewBox="0 0 38 38">
-      <rect width="38" height="38" rx="7" fill="#1a5fa8"/>
-      <rect x="7" y="12" width="24" height="3" rx="1.5" fill="#fff"/>
-      <rect x="7" y="18" width="18" height="3" rx="1.5" fill="#fff"/>
-      <rect x="7" y="24" width="24" height="3" rx="1.5" fill="#2bb5c8"/>
-    </svg>
+    <svg width="38" height="38" viewBox="0 0 38 38"><rect width="38" height="38" rx="7" fill="#1a5fa8"/><rect x="7" y="11" width="24" height="3" rx="1.5" fill="#fff"/><rect x="7" y="17" width="18" height="3" rx="1.5" fill="#fff"/><rect x="7" y="23" width="24" height="3" rx="1.5" fill="#2bb5c8"/></svg>
     <div>
       <div class="logo-name">TIONG LIONG</div>
       <div class="logo-sub">Fabric Library</div>
     </div>
-    <div class="badge">數位樣冊 2.0</div>
+    <div class="badge" data-i18n="badge">數位樣冊 2.0</div>
   </div>
-  <div class="search-wrap">
-    <svg width="14" height="14" fill="none" stroke="#9ca3af" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-    <input type="text" placeholder="搜尋代號、材質、顏色…" oninput="searchFabrics(this.value)">
+  <div class="header-right">
+    <div class="search-wrap">
+      <svg width="14" height="14" fill="none" stroke="#9ca3af" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="搜尋代號、材質、顏色…" oninput="searchFabrics(this.value)">
+    </div>
+    <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
   </div>
 </header>
 
-<!-- ── NAV ── -->
 <nav>
-  <button class="tab-btn active" onclick="goTab('library',this)">🗂️ 布料庫</button>
-  <button class="tab-btn" onclick="goTab('simulator',this)">👟 產品模擬</button>
-  <button class="tab-btn" onclick="goTab('view3d',this)">🔄 3D 預覽</button>
-  <button class="tab-btn" onclick="goTab('comparison',this)">📊 競品分析</button>
+  <button class="tab-btn active" onclick="goTab('library',this)"><span>🗂️</span> <span data-i18n="tabLibrary">布料庫</span></button>
+  <button class="tab-btn" onclick="goTab('simulator',this)"><span>👟</span> <span data-i18n="tabSim">產品模擬</span></button>
+  <button class="tab-btn" onclick="goTab('view3d',this)"><span>🔄</span> <span data-i18n="tab3d">3D 預覽</span></button>
+  <button class="tab-btn" onclick="goTab('comparison',this)"><span>📊</span> <span data-i18n="tabComp">競品分析</span></button>
 </nav>
 
 <div class="main">
 
-<!-- ══════════════════════════════════
-     TAB 1: 布料庫
-══════════════════════════════════ -->
+<!-- ── TAB 1: 布料庫 ── -->
 <div id="tab-library" class="panel active">
   <div class="toolbar">
     <div class="chips">
-      <span class="chip active" onclick="filterBy('all',this)">全部</span>
-      <span class="chip" onclick="filterBy('woven',this)">Woven 平織</span>
-      <span class="chip" onclick="filterBy('knit',this)">Knit 針織</span>
-      <span class="chip" onclick="filterBy('mesh',this)">Mesh 網眼</span>
-      <span class="chip" onclick="filterBy('recycled',this)">♻️ 再生材料</span>
+      <span class="chip active" onclick="filterBy('all',this)" data-i18n="filterAll">全部</span>
+      <span class="chip" onclick="filterBy('woven',this)" data-i18n="filterWoven">Woven 平織</span>
+      <span class="chip" onclick="filterBy('knit',this)" data-i18n="filterKnit">Knit 針織</span>
+      <span class="chip" onclick="filterBy('mesh',this)" data-i18n="filterMesh">Mesh 網眼</span>
+      <span class="chip" onclick="filterBy('recycled',this)" data-i18n="filterRecycled">♻️ 再生材料</span>
     </div>
-    <span style="font-size:13px;color:var(--muted)">顯示 <strong id="cnt">0</strong> 件</span>
+    <span style="font-size:13px;color:var(--muted)"><span data-i18n="showing">顯示</span> <strong id="cnt">0</strong> <span data-i18n="items">件</span></span>
   </div>
   <div class="fabric-grid" id="fab-grid"></div>
 </div>
 
-<!-- ══════════════════════════════════
-     TAB 2: 產品模擬
-══════════════════════════════════ -->
+<!-- ── TAB 2: 產品模擬 ── -->
 <div id="tab-simulator" class="panel">
   <div class="sim-layout">
-    <!-- Sidebar -->
     <div class="sidebar">
       <div>
-        <div class="section-label">選擇布料</div>
+        <div class="sec-lbl" data-i18n="selectFabric">選擇布料</div>
         <div class="mini-grid" id="mini-grid"></div>
       </div>
       <div class="divider"></div>
       <div>
-        <div class="section-label">產品類型</div>
-        <div class="prod-btns">
-          <button class="prod-btn active" onclick="setProd('shoe',this)"><span class="icon">👟</span>運動鞋</button>
-          <button class="prod-btn" onclick="setProd('bag',this)"><span class="icon">👜</span>手提包</button>
-          <button class="prod-btn" onclick="setProd('bp',this)"><span class="icon">🎒</span>背包</button>
-        </div>
-      </div>
-      <div class="divider"></div>
-      <div>
-        <div class="section-label">材質調整</div>
+        <div class="sec-lbl" data-i18n="adjustMaterial">材質調整</div>
         <div class="param-row">
-          <div class="param-lbl"><span>柔軟度</span><span class="param-val" id="v-soft">65%</span></div>
+          <div class="param-lbl"><span data-i18n="softness">柔軟度</span><span class="param-val" id="v-soft">65%</span></div>
           <input type="range" min="0" max="100" value="65" oninput="setParam('soft',this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span>紋理密度</span><span class="param-val" id="v-tex">50%</span></div>
+          <div class="param-lbl"><span data-i18n="texDensity">紋理密度</span><span class="param-val" id="v-tex">50%</span></div>
           <input type="range" min="0" max="100" value="50" oninput="setParam('tex',this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span>光澤感</span><span class="param-val" id="v-gloss">30%</span></div>
+          <div class="param-lbl"><span data-i18n="gloss">光澤感</span><span class="param-val" id="v-gloss">30%</span></div>
           <input type="range" min="0" max="100" value="30" oninput="setParam('gloss',this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span>飽和度</span><span class="param-val" id="v-sat">80%</span></div>
+          <div class="param-lbl"><span data-i18n="saturation">飽和度</span><span class="param-val" id="v-sat">80%</span></div>
           <input type="range" min="0" max="100" value="80" oninput="setParam('sat',this.value)">
         </div>
       </div>
-      <button class="gen-btn" onclick="doGenerate()">✨ AI 生成模擬圖</button>
+      <button class="gen-btn" onclick="doGenerate()" data-i18n="genBtn">✨ AI 生成模擬圖</button>
     </div>
 
-    <!-- Main canvas -->
     <div class="sim-main">
       <div class="sim-toolbar">
         <div class="sim-fab">
-          <div class="sim-preview tex-woven" id="sp" style="--sc:#e85d8a"></div>
+          <div class="sim-preview tx-woven" id="sp" style="--sc:#e85d8a"></div>
           <div>
             <div class="sim-fname" id="sn">AURES WOVEN</div>
             <div class="sim-fcode" id="sc">EFJPT027 · 100% Recycled Polyester</div>
           </div>
         </div>
         <div class="act-btns">
-          <button class="act-btn" onclick="doShare()">📤 分享</button>
-          <button class="act-btn" onclick="doDownload()">💾 下載</button>
-          <button class="act-btn primary" onclick="goTab('view3d',document.querySelectorAll('.tab-btn')[2])">🔄 3D 預覽</button>
+          <button class="act-btn" onclick="doShare()">📤 <span data-i18n="share">分享</span></button>
+          <button class="act-btn" onclick="doDownload()">💾 <span data-i18n="download">下載</span></button>
+          <button class="act-btn primary" onclick="goTab('view3d',document.querySelectorAll('.tab-btn')[2])">🔄 <span data-i18n="view3dBtn">3D 預覽</span></button>
         </div>
       </div>
       <div class="product-stage" id="pstage">
         <div class="gen-overlay" id="gen-ov">
           <div class="spinner"></div>
-          <span>AI 正在生成模擬圖…</span>
+          <span data-i18n="generating">AI 正在生成模擬圖…</span>
         </div>
         <div style="position:relative">
           <div class="prod-wrap" id="prod-wrap"></div>
@@ -522,40 +259,37 @@ input[type=range] { width: 100%; accent-color: var(--blue); cursor: pointer; }
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     TAB 3: 3D 預覽
-══════════════════════════════════ -->
+<!-- ── TAB 3: 3D 預覽 ── -->
 <div id="tab-view3d" class="panel">
-  <div class="view3d-layout">
+  <div class="v3d-layout">
     <div class="stage3d">
       <div class="grid-bg"></div>
       <div class="glow"></div>
       <div class="scene">
-        <div class="shoe3d" id="shoe3d" title="點擊暫停/播放">
+        <div class="shoe3d" id="shoe3d" title="Click to pause / 點擊暫停">
           <div id="shoe3d-inner"></div>
         </div>
         <div class="shoe-shadow"></div>
       </div>
       <div class="angle-bar">
-        <button class="ang-btn active" onclick="setAngle('front',this)">正面</button>
-        <button class="ang-btn" onclick="setAngle('side',this)">側面</button>
-        <button class="ang-btn" onclick="setAngle('top',this)">俯視</button>
-        <button class="ang-btn" onclick="setAngle('back',this)">背面</button>
-        <button class="ang-btn" id="rot-btn" onclick="toggleRot(this)">⏸ 暫停</button>
+        <button class="ang-btn active" onclick="setAngle('front',this)" data-i18n="angleFront">正面</button>
+        <button class="ang-btn" onclick="setAngle('side',this)" data-i18n="angleSide">側面</button>
+        <button class="ang-btn" onclick="setAngle('top',this)" data-i18n="angleTop">俯視</button>
+        <button class="ang-btn" onclick="setAngle('back',this)" data-i18n="angleBack">背面</button>
+        <button class="ang-btn" id="rot-btn" onclick="toggleRot(this)" data-i18n="pause">⏸ 暫停</button>
       </div>
     </div>
-
     <div class="info-cards">
       <div class="icard">
-        <div class="icard-title">規格資訊</div>
+        <div class="icard-title" data-i18n="specInfo">規格資訊</div>
         <div class="spec-grid" id="spec3d"></div>
       </div>
       <div class="icard">
-        <div class="icard-title">可選色系</div>
+        <div class="icard-title" data-i18n="colorOptions">可選色系</div>
         <div class="color-row" id="col-row"></div>
       </div>
       <div class="icard">
-        <div class="icard-title">永續認證</div>
+        <div class="icard-title" data-i18n="certs">永續認證</div>
         <div class="cert-row">
           <div class="cert-item"><span class="cert-tag" style="background:#10b981">GRS</span>Global Recycled Standard</div>
           <div class="cert-item"><span class="cert-tag" style="background:#3b82f6">BCI</span>Better Cotton Initiative</div>
@@ -563,7 +297,7 @@ input[type=range] { width: 100%; accent-color: var(--blue); cursor: pointer; }
         </div>
       </div>
       <div class="icard">
-        <div class="icard-title">材料組成</div>
+        <div class="icard-title" data-i18n="composition">材料組成</div>
         <div style="font-size:12px;font-weight:600;margin-bottom:6px" id="mat3d"></div>
         <div style="background:var(--border);height:6px;border-radius:3px;overflow:hidden">
           <div style="width:100%;height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:3px"></div>
@@ -574,447 +308,448 @@ input[type=range] { width: 100%; accent-color: var(--blue); cursor: pointer; }
   </div>
 </div>
 
-<!-- ══════════════════════════════════
-     TAB 4: 競品分析
-══════════════════════════════════ -->
+<!-- ── TAB 4: 競品分析 ── -->
 <div id="tab-comparison" class="panel">
   <div class="comp-header">
-    <div class="comp-title">數位樣冊功能對比分析</div>
-    <div class="comp-sub">中良現有平台 (v1.0)　vs　Frontier（競品）　vs　中良 2.0 願景規劃</div>
+    <div class="comp-title" data-i18n="compTitle">數位樣冊功能對比分析</div>
+    <div class="comp-sub" data-i18n="compSub">中良現有平台 (v1.0) vs Frontier（競品）vs 中良 2.0 願景規劃</div>
   </div>
-
   <div class="comp-grid">
-    <!-- Headers -->
     <div class="ch ch-empty"></div>
-    <div class="ch ch-cur">中良數位樣冊<div class="ver">現有版本 v1.0</div></div>
-    <div class="ch ch-front">Frontier<div class="ver">競品參考</div></div>
-    <div class="ch ch-vision">中良 2.0 願景<div class="ver">目標規劃</div></div>
+    <div class="ch ch-cur"><span data-i18n="colCur">中良數位樣冊</span><div class="ver">v1.0</div></div>
+    <div class="ch ch-front">Frontier<div class="ver"><span data-i18n="colRef">競品參考</span></div></div>
+    <div class="ch ch-vision"><span data-i18n="colVision">中良 2.0 願景</span><div class="ver"><span data-i18n="colTarget">目標規劃</span></div></div>
 
-    <!-- 基礎功能 -->
-    <div class="cat-row">📂 基礎功能</div>
-    <div class="cf">布料資訊卡（代號／成份／規格）</div>
-    <div class="cv"><span class="yes">✓</span> 完整</div>
-    <div class="cv fr"><span class="yes">✓</span> 完整</div>
-    <div class="cv vi"><span class="yes">✓</span> 完整</div>
+    <div class="cat-row" data-i18n="catBasic">📂 基礎功能</div>
+    <div class="cf" data-i18n="f01">布料資訊卡（代號／成份／規格）</div>
+    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f02">進階搜尋與篩選</div>
+    <div class="cv"><span class="par">△</span> <span data-i18n="basic">基本</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> AI</div>
+    <div class="cf" data-i18n="f03">永續認證（GRS / OEKO）</div>
+    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> +CO₂</div>
+    <div class="cf" data-i18n="f04">價格與交期</div>
+    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> <span data-i18n="realtime">即時</span></div>
+    <div class="cf" data-i18n="f05">多語言（中／英／日）</div>
+    <div class="cv"><span class="par">△</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> ×4</div>
 
-    <div class="cf">進階搜尋與篩選</div>
-    <div class="cv"><span class="par">△</span> 基本</div>
-    <div class="cv fr"><span class="yes">✓</span> 進階</div>
-    <div class="cv vi"><span class="yes">✓</span> AI 語意搜尋</div>
+    <div class="cat-row" data-i18n="catVis">🎨 視覺模擬</div>
+    <div class="cf" data-i18n="f11">靜態布料高解析照片</div>
+    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f12">布料貼合產品模擬（鞋款）</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> NB574</div>
+    <div class="cf" data-i18n="f13">3D 全視角旋轉預覽</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span> P7</div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f14">AI 材質柔化生成</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span> P8</div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f15">材質參數即時調整</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="par">△</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f16">顏色配色切換</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> AI</div>
 
-    <div class="cf">永續認證標示（GRS/OEKO）</div>
-    <div class="cv"><span class="yes">✓</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> + 碳足跡計算</div>
+    <div class="cat-row" data-i18n="catAI">🤖 AI 生成</div>
+    <div class="cf" data-i18n="f21">布料 → 成品一鍵生成</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f22">生活情境 Lookbook</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="par">△</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f23">針織 vs 平織識別模擬</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span> P8</div><div class="cv vi"><span class="yes">✓</span></div>
 
-    <div class="cf">價格與交期資訊</div>
-    <div class="cv"><span class="yes">✓</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 即時報價</div>
-
-    <div class="cf">多語言支援（中／英／日）</div>
-    <div class="cv"><span class="par">△</span> 中英</div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 中英日韓</div>
-
-    <!-- 視覺模擬 -->
-    <div class="cat-row">🎨 視覺模擬</div>
-    <div class="cf">靜態布料高解析照片</div>
-    <div class="cv"><span class="yes">✓</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span></div>
-
-    <div class="cf">布料貼合產品模擬（鞋／包包）</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span> 鞋類為主</div>
-    <div class="cv vi"><span class="yes">✓</span> 多品類</div>
-
-    <div class="cf">3D 全視角旋轉預覽</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span> P7 功能</div>
-    <div class="cv vi"><span class="yes">✓</span></div>
-
-    <div class="cf">AI 材質柔化生成（Softening）</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span> P8 功能</div>
-    <div class="cv vi"><span class="yes">✓</span></div>
-
-    <div class="cf">材質參數即時調整（柔軟／光澤／密度）</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="par">△</span> 有限</div>
-    <div class="cv vi"><span class="yes">✓</span> 全參數調整</div>
-
-    <div class="cf">顏色配色即時切換</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> AI 配色建議</div>
-
-    <!-- AI 生成 -->
-    <div class="cat-row">🤖 AI 生成功能</div>
-    <div class="cf">單塊布料 → 成品模擬圖（一鍵生成）</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 一鍵生成</div>
-
-    <div class="cf">生活情境搭配 Lookbook</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="par">△</span> 部分</div>
-    <div class="cv vi"><span class="yes">✓</span> AI Lookbook</div>
-
-    <div class="cf">多品類延伸（鞋／包／服裝／配件）</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="par">△</span> 鞋類優先</div>
-    <div class="cv vi"><span class="yes">✓</span> 全品類</div>
-
-    <div class="cf">針織 vs 平織類型識別與模擬</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="yes">✓</span> P8 功能</div>
-    <div class="cv vi"><span class="yes">✓</span></div>
-
-    <!-- 客戶體驗 -->
-    <div class="cat-row">📱 客戶體驗（展會／平板）</div>
-    <div class="cf">平板展示優化（橫向操作）</div>
-    <div class="cv"><span class="par">△</span> 一般</div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 展會專用模式</div>
-
-    <div class="cf">客戶互動選色 / 選款</div>
-    <div class="cv"><span class="no">✗</span></div>
-    <div class="cv fr"><span class="par">△</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 實時互動</div>
-
-    <div class="cf">模擬圖分享 / 下載</div>
-    <div class="cv"><span class="par">△</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span></div>
-
-    <div class="cf">樣本快速報價 / 訂購</div>
-    <div class="cv"><span class="yes">✓</span></div>
-    <div class="cv fr"><span class="yes">✓</span></div>
-    <div class="cv vi"><span class="yes">✓</span> 即時報價整合</div>
+    <div class="cat-row" data-i18n="catUX">📱 展會客戶體驗</div>
+    <div class="cf" data-i18n="f31">平板展示優化</div>
+    <div class="cv"><span class="par">△</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f32">客戶互動選色</div>
+    <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="par">△</span></div><div class="cv vi"><span class="yes">✓</span></div>
+    <div class="cf" data-i18n="f33">模擬圖分享／下載</div>
+    <div class="cv"><span class="par">△</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
   </div>
 
-  <!-- Roadmap -->
   <div class="roadmap">
-    <div class="rm-title">🗺️ 中良數位樣冊 2.0 升級路線圖</div>
+    <div class="rm-title" data-i18n="rmTitle">🗺️ 中良數位樣冊 2.0 升級路線圖</div>
     <div class="phases">
       <div class="phase p1">
-        <div class="ph-header"><span class="ph-tag">Phase 1</span><span class="ph-name">基礎強化（Q3 2026）</span></div>
+        <div class="ph-header"><span class="ph-tag">Phase 1</span><span class="ph-name" data-i18n="ph1">基礎強化（Q3 2026）</span></div>
         <ul class="ph-list">
-          <li>布料庫 UI/UX 全面優化</li>
-          <li>平板展示專用模式</li>
-          <li>進階搜尋＋智慧篩選</li>
-          <li>永續認證儀表板</li>
-          <li>多語言支援（中英日韓）</li>
-          <li>模擬圖分享／下載</li>
+          <li data-i18n="ph1a">布料庫 UI/UX 全面優化</li>
+          <li data-i18n="ph1b">平板展示專用模式</li>
+          <li data-i18n="ph1c">進階搜尋 + 智慧篩選</li>
+          <li data-i18n="ph1d">永續認證儀表板</li>
+          <li data-i18n="ph1e">多語言（中英日韓）</li>
         </ul>
       </div>
       <div class="phase p2">
-        <div class="ph-header"><span class="ph-tag">Phase 2</span><span class="ph-name">視覺模擬（Q4 2026）</span></div>
+        <div class="ph-header"><span class="ph-tag">Phase 2</span><span class="ph-name" data-i18n="ph2">視覺模擬（Q4 2026）</span></div>
         <ul class="ph-list">
-          <li>布料 → 鞋類產品模擬</li>
-          <li>布料 → 包包產品模擬</li>
-          <li>CSS/WebGL 3D 旋轉預覽</li>
-          <li>顏色配色即時切換</li>
-          <li>材質參數全調整工具</li>
-          <li>客戶互動選色功能</li>
+          <li data-i18n="ph2a">布料 → NB574 鞋款模擬</li>
+          <li data-i18n="ph2b">3D 全視角旋轉預覽</li>
+          <li data-i18n="ph2c">顏色配色即時切換</li>
+          <li data-i18n="ph2d">材質參數全調整工具</li>
+          <li data-i18n="ph2e">客戶互動選色功能</li>
         </ul>
       </div>
       <div class="phase p3">
-        <div class="ph-header"><span class="ph-tag">Phase 3</span><span class="ph-name">AI 生成（Q1-Q2 2027）</span></div>
+        <div class="ph-header"><span class="ph-tag">Phase 3</span><span class="ph-name" data-i18n="ph3">AI 生成（Q1–Q2 2027）</span></div>
         <ul class="ph-list">
-          <li>Stable Diffusion 布料貼合</li>
-          <li>AI 材質柔化生成（對標 P8）</li>
-          <li>生活情境 Lookbook 生成</li>
-          <li>多品類延伸（服裝／配件）</li>
-          <li>即時報價系統整合</li>
-          <li>客戶個人化收藏清單</li>
+          <li data-i18n="ph3a">Stable Diffusion 布料貼合</li>
+          <li data-i18n="ph3b">AI 材質柔化（對標 P8）</li>
+          <li data-i18n="ph3c">生活情境 Lookbook 生成</li>
+          <li data-i18n="ph3d">多品類延伸（服裝／配件）</li>
+          <li data-i18n="ph3e">即時報價系統整合</li>
         </ul>
       </div>
     </div>
   </div>
 </div>
-
 </div><!-- /main -->
 <div class="toast" id="toast"></div>
 
 <script>
-// ─────────────── DATA ───────────────
+/* ══════════════ DATA ══════════════ */
 const FABRICS = [
-  { id:'EFJPT027', name:'AURES WOVEN',   type:'woven', color:'#e85d8a', content:'100% Recycled Polyester',           price:'US$8.94/SY',  msi:14.74, recycled:true,  tex:'tex-woven', lead:14, width:'56"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFJMT064', name:'VELERO KNIT',   type:'knit',  color:'#3a86ff', content:'88% Recycled Nylon / 12% Spandex', price:'US$11.20/SY', msi:12.30, recycled:true,  tex:'tex-knit',  lead:14, width:'58"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFMSH018', name:'AEROMESH PLUS', type:'mesh',  color:'#06d6a0', content:'100% Polyester',                   price:'US$6.50/SY',  msi:8.90,  recycled:false, tex:'tex-mesh',  lead:10, width:'60"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFWVN042', name:'TERRA WOVEN',   type:'woven', color:'#8b5e3c', content:'60% Recycled Cotton / 40% Polyester', price:'US$9.80/SY', msi:15.20, recycled:true,  tex:'tex-woven', lead:14, width:'54"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFKNT031', name:'CLOUD KNIT',    type:'knit',  color:'#f4a261', content:'80% Recycled Polyester / 20% Elastane', price:'US$10.45/SY', msi:13.10, recycled:true, tex:'tex-knit', lead:12, width:'58"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFMSH025', name:'ULTRA MESH',    type:'mesh',  color:'#9b5de5', content:'100% Recycled Polyester',           price:'US$7.30/SY',  msi:9.50,  recycled:true,  tex:'tex-mesh',  lead:10, width:'60"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFWVN055', name:'NERO WOVEN',    type:'woven', color:'#2b2d42', content:'100% Nylon',                        price:'US$12.60/SY', msi:16.80, recycled:false, tex:'tex-woven', lead:14, width:'56"', supplier:'TLC/TW,CN,VN' },
-  { id:'EFKNT044', name:'FLEX KNIT PRO', type:'knit',  color:'#ef233c', content:'92% Recycled Polyester / 8% Spandex', price:'US$9.15/SY', msi:11.90, recycled:true, tex:'tex-knit', lead:14, width:'58"', supplier:'TLC/TW,CN,VN' },
+  {id:'EFJPT027',name:'AURES WOVEN',   type:'woven',color:'#e85d8a',content:'100% Recycled Polyester',          price:'US$8.94/SY', msi:14.74,recycled:true, tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFJMT064',name:'VELERO KNIT',   type:'knit', color:'#3a86ff',content:'88% Recycled Nylon / 12% Spandex', price:'US$11.20/SY',msi:12.30,recycled:true, tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFMSH018',name:'AEROMESH PLUS', type:'mesh', color:'#06d6a0',content:'100% Polyester',                   price:'US$6.50/SY', msi:8.90, recycled:false,tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFWVN042',name:'TERRA WOVEN',   type:'woven',color:'#8b5e3c',content:'60% Recycled Cotton / 40% Polyester',price:'US$9.80/SY',msi:15.20,recycled:true, tex:'tx-woven',lead:14,width:'54"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFKNT031',name:'CLOUD KNIT',    type:'knit', color:'#f4a261',content:'80% Recycled Polyester / 20% Elastane',price:'US$10.45/SY',msi:13.10,recycled:true,tex:'tx-knit',lead:12,width:'58"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFMSH025',name:'ULTRA MESH',    type:'mesh', color:'#9b5de5',content:'100% Recycled Polyester',          price:'US$7.30/SY', msi:9.50, recycled:true, tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFWVN055',name:'NERO WOVEN',    type:'woven',color:'#2b2d42',content:'100% Nylon',                       price:'US$12.60/SY',msi:16.80,recycled:false,tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFKNT044',name:'FLEX KNIT PRO', type:'knit', color:'#ef233c',content:'92% Recycled Polyester / 8% Spandex',price:'US$9.15/SY',msi:11.90,recycled:true,tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
 ];
-const COLORS_3D = ['#e85d8a','#3a86ff','#06d6a0','#f4a261','#9b5de5','#ef233c','#2b2d42','#ffd60a'];
+const COLORS_3D=['#e85d8a','#3a86ff','#06d6a0','#f4a261','#9b5de5','#ef233c','#2b2d42','#ffd60a'];
 
-let selId = 'EFJPT027';
-let selProd = 'shoe';
-let visibleFabs = [...FABRICS];
-let rotating = true;
-let col3d = '#e85d8a';
+/* ══════════════ i18n ══════════════ */
+let curLang='zh';
+const T={
+  zh:{
+    badge:'數位樣冊 2.0',searchPlaceholder:'搜尋代號、材質、顏色…',
+    tabLibrary:'布料庫',tabSim:'產品模擬',tab3d:'3D 預覽',tabComp:'競品分析',
+    filterAll:'全部',filterWoven:'Woven 平織',filterKnit:'Knit 針織',filterMesh:'Mesh 網眼',filterRecycled:'♻️ 再生材料',
+    showing:'顯示',items:'件',
+    selectFabric:'選擇布料',adjustMaterial:'材質調整',
+    softness:'柔軟度',texDensity:'紋理密度',gloss:'光澤感',saturation:'飽和度',
+    genBtn:'✨ AI 生成模擬圖',share:'分享',download:'下載',view3dBtn:'3D 預覽',
+    generating:'AI 正在生成模擬圖…',
+    angleFront:'正面',angleSide:'側面',angleTop:'俯視',angleBack:'背面',pause:'⏸ 暫停',play:'▶ 播放',
+    specInfo:'規格資訊',colorOptions:'可選色系',certs:'永續認證',composition:'材料組成',
+    compTitle:'數位樣冊功能對比分析',compSub:'中良現有平台 (v1.0) vs Frontier（競品）vs 中良 2.0 願景規劃',
+    colCur:'中良數位樣冊',colRef:'競品參考',colVision:'中良 2.0 願景',colTarget:'目標規劃',
+    catBasic:'📂 基礎功能',catVis:'🎨 視覺模擬',catAI:'🤖 AI 生成',catUX:'📱 展會客戶體驗',
+    f01:'布料資訊卡（代號／成份／規格）',f02:'進階搜尋與篩選',f03:'永續認證（GRS / OEKO）',f04:'價格與交期',f05:'多語言（中／英／日）',
+    f11:'靜態布料高解析照片',f12:'布料貼合產品模擬（鞋款）',f13:'3D 全視角旋轉預覽',f14:'AI 材質柔化生成',f15:'材質參數即時調整',f16:'顏色配色切換',
+    f21:'布料 → 成品一鍵生成',f22:'生活情境 Lookbook',f23:'針織 vs 平織識別模擬',
+    f31:'平板展示優化',f32:'客戶互動選色',f33:'模擬圖分享／下載',
+    basic:'基本',realtime:'即時',
+    rmTitle:'🗺️ 中良數位樣冊 2.0 升級路線圖',
+    ph1:'基礎強化（Q3 2026）',ph1a:'布料庫 UI/UX 全面優化',ph1b:'平板展示專用模式',ph1c:'進階搜尋 + 智慧篩選',ph1d:'永續認證儀表板',ph1e:'多語言（中英日韓）',
+    ph2:'視覺模擬（Q4 2026）',ph2a:'布料 → NB574 鞋款模擬',ph2b:'3D 全視角旋轉預覽',ph2c:'顏色配色即時切換',ph2d:'材質參數全調整工具',ph2e:'客戶互動選色功能',
+    ph3:'AI 生成（Q1–Q2 2027）',ph3a:'Stable Diffusion 布料貼合',ph3b:'AI 材質柔化（對標 P8）',ph3c:'生活情境 Lookbook 生成',ph3d:'多品類延伸（服裝／配件）',ph3e:'即時報價系統整合',
+    simBtnLabel:'👟 模擬',
+    supplier:'供應商',width:'寬度',unitPrice:'單價',sampleLead:'交期(樣)',msiLabel:'MSI',prodLead:'交期(量產)',
+  },
+  en:{
+    badge:'Digital Swatch 2.0',searchPlaceholder:'Search code, material, color…',
+    tabLibrary:'Fabric Library',tabSim:'Product Sim',tab3d:'3D View',tabComp:'Analysis',
+    filterAll:'All',filterWoven:'Woven',filterKnit:'Knit',filterMesh:'Mesh',filterRecycled:'♻️ Recycled',
+    showing:'Showing',items:'items',
+    selectFabric:'Select Fabric',adjustMaterial:'Material Adjust',
+    softness:'Softness',texDensity:'Texture Density',gloss:'Gloss',saturation:'Saturation',
+    genBtn:'✨ Generate AI Mockup',share:'Share',download:'Download',view3dBtn:'3D View',
+    generating:'AI is generating mockup…',
+    angleFront:'Front',angleSide:'Side',angleTop:'Top',angleBack:'Back',pause:'⏸ Pause',play:'▶ Play',
+    specInfo:'Specifications',colorOptions:'Color Options',certs:'Certifications',composition:'Composition',
+    compTitle:'Digital Swatch Feature Comparison',compSub:'TLC v1.0  vs  Frontier (Competitor)  vs  TLC 2.0 Vision',
+    colCur:'TLC Swatch',colRef:'Competitor',colVision:'TLC 2.0 Vision',colTarget:'Target Plan',
+    catBasic:'📂 Core Features',catVis:'🎨 Visual Simulation',catAI:'🤖 AI Generation',catUX:'📱 Trade Show UX',
+    f01:'Fabric info card (code / content / specs)',f02:'Advanced search & filter',f03:'Sustainability certs (GRS / OEKO)',f04:'Price & lead time',f05:'Multi-language (CN / EN / JP)',
+    f11:'Hi-res static fabric photo',f12:'Fabric-on-product simulation (shoes)',f13:'3D 360° rotation preview',f14:'AI material softening',f15:'Real-time material param adjustment',f16:'Color switching',
+    f21:'Fabric → product one-click generation',f22:'Lifestyle lookbook generation',f23:'Knit vs. woven type recognition',
+    f31:'Tablet display optimization',f32:'Interactive customer color picking',f33:'Share / download mockup',
+    basic:'Basic',realtime:'Realtime',
+    rmTitle:'🗺️ TLC Digital Swatch 2.0 Upgrade Roadmap',
+    ph1:'Foundation (Q3 2026)',ph1a:'Full library UI/UX overhaul',ph1b:'Tablet trade-show mode',ph1c:'Smart search & filtering',ph1d:'Sustainability dashboard',ph1e:'Multi-language (CN/EN/JP/KR)',
+    ph2:'Visual Simulation (Q4 2026)',ph2a:'Fabric → NB574 shoe simulation',ph2b:'3D 360° rotation preview',ph2c:'Real-time color switching',ph2d:'Full material param controls',ph2e:'Interactive customer color pick',
+    ph3:'AI Generation (Q1–Q2 2027)',ph3a:'Stable Diffusion fabric draping',ph3b:'AI material softening (parity P8)',ph3c:'AI lifestyle lookbook generation',ph3d:'Multi-category (apparel/accessories)',ph3e:'Real-time quoting integration',
+    simBtnLabel:'👟 Simulate',
+    supplier:'Supplier',width:'Width',unitPrice:'Unit Price',sampleLead:'Sample Lead',msiLabel:'MSI',prodLead:'Prod Lead',
+  }
+};
 
-// ─────────────── UTILS ───────────────
-function h2r(h){ return [parseInt(h.slice(1,3),16), parseInt(h.slice(3,5),16), parseInt(h.slice(5,7),16)]; }
-function r2h(r,g,b){ return '#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join(''); }
-function dk(h,a){ const[r,g,b]=h2r(h); return r2h(r-a,g-a,b-a); }
-function lt(h,a){ const[r,g,b]=h2r(h); return r2h(r+a,g+a,b+a); }
-function fab(){ return FABRICS.find(f=>f.id===selId); }
+function t(key){return T[curLang][key]||T.zh[key]||key}
 
-function toast(msg){
-  const t=document.getElementById('toast');
-  t.textContent=msg; t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2800);
+function applyLang(){
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const k=el.getAttribute('data-i18n');
+    el.textContent=t(k);
+  });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    el.placeholder=t(el.getAttribute('data-i18n-placeholder'));
+  });
+  document.getElementById('lang-btn').textContent=curLang==='zh'?'EN':'中文';
 }
 
-// ─────────────── TAB ───────────────
-function goTab(tab, btn){
+function toggleLang(){
+  curLang=curLang==='zh'?'en':'zh';
+  applyLang();
+  renderGrid(visibleFabs);
+  renderMini();
+  renderProd();
+  render3d();
+}
+
+/* ══════════════ STATE ══════════════ */
+let selId='EFJPT027';
+let visibleFabs=[...FABRICS];
+let rotating=true;
+let col3d='#e85d8a';
+
+/* ══════════════ COLOR UTILS ══════════════ */
+function h2r(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
+function r2h(r,g,b){return'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
+function dk(h,a){const[r,g,b]=h2r(h);return r2h(r-a,g-a,b-a)}
+function lt(h,a){const[r,g,b]=h2r(h);return r2h(r+a,g+a,b+a)}
+function fab(){return FABRICS.find(f=>f.id===selId)}
+
+function toast(msg){
+  const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  setTimeout(()=>el.classList.remove('show'),2800);
+}
+
+/* ══════════════ NB 574 SVG ══════════════ */
+function nb574(color,w,h){
+  const uid=color.replace(/[^a-z0-9]/gi,'');
+  const D=dk(color,40), VD=dk(color,58), L=lt(color,32), VL=lt(color,52), MID=lt(color,16);
+
+  const laces=(()=>{
+    const rows=[[160,102,270,98],[163,113,268,109],[166,124,265,120],[170,135,262,131],[173,146,260,142]];
+    return rows.map(([x1,y1,x2,y2])=>`
+      <circle cx="${x1}" cy="${y1}" r="2.8" fill="${VD}" opacity=".85"/>
+      <circle cx="${x2}" cy="${y2}" r="2.8" fill="${VD}" opacity=".85"/>
+      <path d="M${x1+2.5},${y1} C${(x1+x2)/2},${y1-5} ${(x1+x2)/2},${y2-5} ${x2-2.5},${y2}" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="1.8"/>
+    `).join('');
+  })();
+
+  return `<svg width="${w}" height="${h}" viewBox="0 0 520 270" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="ug${uid}" x1="0%" y1="0%" x2="85%" y2="100%">
+      <stop offset="0%" stop-color="${L}"/>
+      <stop offset="100%" stop-color="${D}"/>
+    </linearGradient>
+    <linearGradient id="msg${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#f2f2f2"/>
+      <stop offset="100%" stop-color="#c0c0c0"/>
+    </linearGradient>
+    <linearGradient id="hcg${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="${MID}"/>
+      <stop offset="100%" stop-color="${D}"/>
+    </linearGradient>
+    <pattern id="wp${uid}" width="5" height="5" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="5" y2="5" stroke="rgba(255,255,255,.1)" stroke-width=".9"/>
+      <line x1="5" y1="0" x2="0" y2="5" stroke="rgba(0,0,0,.07)" stroke-width=".9"/>
+    </pattern>
+    <clipPath id="cp${uid}">
+      <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q153,80 196,72 L255,66 Q305,62 348,68 L392,80 Q430,93 450,118 L463,145 Q470,170 467,196 L465,202 Z"/>
+    </clipPath>
+  </defs>
+
+  <!-- ground shadow -->
+  <ellipse cx="258" cy="258" rx="218" ry="10" fill="rgba(0,0,0,.16)"/>
+
+  <!-- OUTSOLE -->
+  <path d="M48,224 Q40,230 43,238 L47,244 Q258,252 480,243 L488,237 Q490,229 484,222 Z" fill="#181818"/>
+  <!-- outsole tread notches -->
+  ${[105,140,175,215,255,295,335,375,420].map(x=>`<line x1="${x}" y1="244" x2="${x}" y2="238" stroke="#3a3a3a" stroke-width="3.2" stroke-linecap="round"/>`).join('')}
+
+  <!-- MIDSOLE — chunky 574 foam -->
+  <path d="M50,200 Q44,210 48,224 Q258,232 484,222 Q488,214 485,205 Q430,210 355,210 Q260,214 165,208 Q100,206 50,200 Z" fill="url(#msg${uid})"/>
+  <!-- midsole highlight seam -->
+  <path d="M55,213 Q260,218 483,212" fill="none" stroke="rgba(255,255,255,.55)" stroke-width=".9" stroke-dasharray="3,2"/>
+  <!-- midsole lower seam -->
+  <path d="M49,220 Q260,226 485,218" fill="none" stroke="#aaa" stroke-width=".7" stroke-dasharray="3,2"/>
+
+  <!-- UPPER MAIN BODY -->
+  <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q153,80 196,72 L255,66 Q305,62 348,68 L392,80 Q430,93 450,118 L463,145 Q470,170 467,196 L465,202 Z" fill="url(#ug${uid})"/>
+  <!-- fabric texture overlay -->
+  <rect x="0" y="0" width="520" height="270" fill="url(#wp${uid})" clip-path="url(#cp${uid})" opacity=".65"/>
+
+  <!-- TOE CAP — darker suede front section -->
+  <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q150,115 162,150 Q108,172 72,196 Q61,200 52,202 Z" fill="${D}" opacity=".87"/>
+  <!-- toe cap seam stitching -->
+  <path d="M118,97 Q150,115 162,150" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="1.6" stroke-dasharray="3,2"/>
+
+  <!-- SIDE PANEL — lighter panel in center (N logo area) -->
+  <path d="M164,150 Q206,112 264,99 L352,95 Q400,99 432,124 L465,150 Q402,168 322,174 Q238,178 178,167 Z" fill="${L}" opacity=".60"/>
+
+  <!-- LARGE N LOGO — NB 574 iconic mark -->
+  <text x="252" y="164" font-size="84" font-weight="900" fill="white" opacity=".88"
+        font-family="'Arial Black',Impact,'Helvetica Neue',sans-serif"
+        transform="skewX(-10)">N</text>
+  <!-- N stitching outline -->
+  <text x="252" y="164" font-size="84" font-weight="900" fill="none" stroke="${VL}" stroke-width="1.2" opacity=".4"
+        font-family="'Arial Black',Impact,'Helvetica Neue',sans-serif"
+        transform="skewX(-10)">N</text>
+
+  <!-- TONGUE -->
+  <path d="M155,100 Q176,76 210,68 L248,65 Q270,64 278,73 L280,87 Q268,102 252,110 Q224,120 196,118 L168,112 Z" fill="${VL}" opacity=".90"/>
+  <!-- NB tab on tongue -->
+  <rect x="216" y="86" width="30" height="12" rx="3" fill="${D}" opacity=".75"/>
+  <text x="231" y="96" text-anchor="middle" font-size="7.5" fill="white" font-weight="700">NB</text>
+
+  <!-- LACES -->
+  ${laces}
+
+  <!-- COLLAR PADDING — softer lighter back area -->
+  <path d="M390,83 Q426,95 449,120 L462,148 Q466,166 465,182 L462,196 Q456,172 446,152 Q426,122 394,106 L380,92 Z" fill="${VL}" opacity=".50"/>
+
+  <!-- HEEL COUNTER — back structural panel -->
+  <path d="M432,122 Q455,142 463,170 L465,202 L453,202 Q452,180 448,162 Q440,140 424,126 Z" fill="url(#hcg${uid})" opacity=".88"/>
+  <!-- heel tab -->
+  <rect x="455" y="132" width="11" height="38" rx="4" fill="${VL}" opacity=".92"/>
+  <text x="460" y="154" font-size="7" fill="${D}" font-weight="700" text-anchor="middle" writing-mode="vertical-rl">NB</text>
+
+  <!-- COLLAR EDGE top stitching -->
+  <path d="M255,66 Q306,60 350,66 L394,78 Q432,91 452,116" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-dasharray="3,2"/>
+  <!-- collar opening shape (inner foam) -->
+  <path d="M390,83 Q408,79 430,86 L450,100 Q426,95 398,92 Z" fill="white" opacity=".18"/>
+  </svg>`;
+}
+
+/* ══════════════ TAB ══════════════ */
+function goTab(tab,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   btn.classList.add('active');
-  if(tab==='simulator'){ renderMini(); renderProd(); }
-  if(tab==='view3d')    { render3d(); }
+  if(tab==='simulator'){renderMini();renderProd();}
+  if(tab==='view3d'){render3d();}
 }
 
-// ─────────────── LIBRARY ───────────────
+/* ══════════════ LIBRARY ══════════════ */
 function renderGrid(list){
-  document.getElementById('cnt').textContent = list.length;
-  document.getElementById('fab-grid').innerHTML = list.map(f=>`
+  document.getElementById('cnt').textContent=list.length;
+  document.getElementById('fab-grid').innerHTML=list.map(f=>`
     <div class="fabric-card ${f.id===selId?'selected':''}" onclick="selFab('${f.id}')">
       <div class="swatch ${f.tex}" style="--sc:${f.color}">
-        <div class="swatch-badge">MSI ${f.msi}</div>
-        ${f.recycled?'<div class="recycle-tag">♻ Recycle</div>':''}
+        <div class="sw-badge">MSI ${f.msi}</div>
+        ${f.recycled?'<div class="rec-tag">♻ Recycle</div>':''}
       </div>
       <div class="card-body">
         <div class="card-name">${f.name}</div>
         <div class="card-code">${f.id}</div>
         <div class="card-specs">
-          <span class="spec-k">成份</span><span class="spec-v" style="font-size:10px">${f.content.length>22?f.content.slice(0,22)+'…':f.content}</span>
-          <span class="spec-k">寬度</span><span class="spec-v">${f.width}</span>
-          <span class="spec-k">交期(樣)</span><span class="spec-v">${f.lead} 天</span>
-          <span class="spec-k">供應商</span><span class="spec-v" style="font-size:10px">TLC</span>
+          <span class="sk">${t('supplier')&&curLang==='en'?'Content':'成份'}</span><span class="sv" style="font-size:10px">${f.content.length>22?f.content.slice(0,22)+'…':f.content}</span>
+          <span class="sk">${curLang==='en'?'Width':'寬度'}</span><span class="sv">${f.width}</span>
+          <span class="sk">${curLang==='en'?'S.Lead':'交期(樣)'}</span><span class="sv">${f.lead}${curLang==='en'?' d':' 天'}</span>
+          <span class="sk">${curLang==='en'?'Origin':'供應商'}</span><span class="sv" style="font-size:10px">TLC</span>
         </div>
         <div class="card-foot">
           <span class="price">${f.price}</span>
-          <button class="sim-btn" onclick="event.stopPropagation();quickSim('${f.id}')">👟 模擬</button>
+          <button class="sim-btn" onclick="event.stopPropagation();quickSim('${f.id}')">${t('simBtnLabel')}</button>
         </div>
       </div>
     </div>`).join('');
 }
 
-function selFab(id){
-  selId=id; visibleFabs=visibleFabs; renderGrid(visibleFabs);
-  renderMini(); renderProd(); render3d();
-}
+function selFab(id){selId=id;renderGrid(visibleFabs);renderMini();renderProd();render3d();}
 
 function quickSim(id){
   selId=id;
-  goTab('simulator', document.querySelectorAll('.tab-btn')[1]);
+  goTab('simulator',document.querySelectorAll('.tab-btn')[1]);
 }
 
-function filterBy(type, chip){
+function filterBy(type,chip){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
   chip.classList.add('active');
-  visibleFabs = type==='all'     ? [...FABRICS]
-              : type==='recycled'? FABRICS.filter(f=>f.recycled)
-              :                    FABRICS.filter(f=>f.type===type);
+  visibleFabs=type==='all'?[...FABRICS]:type==='recycled'?FABRICS.filter(f=>f.recycled):FABRICS.filter(f=>f.type===type);
   renderGrid(visibleFabs);
 }
 
 function searchFabrics(q){
-  const qL=q.toLowerCase();
-  visibleFabs = FABRICS.filter(f=>
-    f.name.toLowerCase().includes(qL)||f.id.toLowerCase().includes(qL)||
-    f.content.toLowerCase().includes(qL)||f.color.includes(qL)
-  );
+  const ql=q.toLowerCase();
+  visibleFabs=FABRICS.filter(f=>f.name.toLowerCase().includes(ql)||f.id.toLowerCase().includes(ql)||f.content.toLowerCase().includes(ql));
   renderGrid(visibleFabs);
 }
 
-// ─────────────── SIMULATOR ───────────────
+/* ══════════════ SIMULATOR ══════════════ */
 function renderMini(){
-  document.getElementById('mini-grid').innerHTML = FABRICS.map(f=>`
+  document.getElementById('mini-grid').innerHTML=FABRICS.map(f=>`
     <div class="mini-sw ${f.tex} ${f.id===selId?'active':''}" style="--sc:${f.color}" onclick="selFab('${f.id}')">
       <span>${f.name.split(' ')[0]}</span>
     </div>`).join('');
 }
 
 function renderProd(){
-  const f=fab(); if(!f) return;
+  const f=fab();if(!f)return;
   const sp=document.getElementById('sp');
-  sp.style.setProperty('--sc',f.color); sp.className=`sim-preview ${f.tex}`;
-  document.getElementById('sn').textContent = f.name;
-  document.getElementById('sc').textContent = f.id+' · '+f.content;
-  document.getElementById('ft-mat').innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>🧵 '+f.content.split('/')[0].trim();
-  document.getElementById('ft-code').innerHTML = '<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>📋 '+f.id;
-  drawProduct(f);
+  sp.style.setProperty('--sc',f.color);sp.className=`sim-preview ${f.tex}`;
+  document.getElementById('sn').textContent=f.name;
+  document.getElementById('sc').textContent=f.id+' · '+f.content;
+  document.getElementById('ft-mat').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>🧵 ${f.content.split('/')[0].trim()}`;
+  document.getElementById('ft-code').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>📋 ${f.id}`;
+  document.getElementById('prod-wrap').innerHTML=nb574(f.color,500,265);
 }
 
-function setProd(type, btn){
-  selProd=type;
-  document.querySelectorAll('.prod-btn').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  renderProd();
-}
-
-function drawProduct(f){
-  const w = document.getElementById('prod-wrap');
-  if(selProd==='shoe')     w.innerHTML = shoeSVG(f.color,420,240);
-  else if(selProd==='bag') w.innerHTML = bagSVG(f.color,300,280);
-  else                     w.innerHTML = bpSVG(f.color,260,320);
-}
-
-function setParam(key,val){ document.getElementById('v-'+key).textContent=val+'%'; }
+function setParam(key,val){document.getElementById('v-'+key).textContent=val+'%';}
 
 function doGenerate(){
   const ov=document.getElementById('gen-ov');
   ov.classList.add('show');
-  toast('🤖 AI 正在生成模擬圖，請稍候…');
-  setTimeout(()=>{ ov.classList.remove('show'); renderProd(); toast('✅ 模擬圖生成完成！'); }, 2000);
+  toast(curLang==='zh'?'🤖 AI 正在生成模擬圖，請稍候…':'🤖 AI generating mockup, please wait…');
+  setTimeout(()=>{ov.classList.remove('show');renderProd();toast(curLang==='zh'?'✅ 模擬圖生成完成！':'✅ Mockup generated!');},2000);
 }
-function doShare(){ toast(`📤 已複製 ${fab().name} ${selProd} 模擬連結`); }
-function doDownload(){ toast(`💾 下載中：${fab().id}_${selProd}_mockup.png`); }
+function doShare(){toast(`📤 ${fab().name} ${curLang==='zh'?'分享連結已複製':'share link copied'}`);}
+function doDownload(){toast(`💾 ${fab().id}_NB574_mockup.png ${curLang==='zh'?'下載中…':'downloading…'}`);}
 
-// ─────────────── SVG PRODUCTS ───────────────
-function shoeSVG(c, w, h){
-  const dk40=dk(c,40), lt40=lt(c,40), lt20=lt(c,20), lt30=lt(c,30);
-  return `<svg width="${w}" height="${h}" viewBox="0 0 420 240">
-  <defs>
-    <linearGradient id="sg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${lt40}"/><stop offset="100%" stop-color="${dk40}"/>
-    </linearGradient>
-    <linearGradient id="solg" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#e0e0e0"/><stop offset="100%" stop-color="#bdbdbd"/>
-    </linearGradient>
-    <pattern id="fp" x="0" y="0" width="8" height="8" patternUnits="userSpaceOnUse">
-      <line x1="0" y1="0" x2="8" y2="8" stroke="rgba(255,255,255,0.14)" stroke-width="1"/>
-      <line x1="8" y1="0" x2="0" y2="8" stroke="rgba(0,0,0,0.07)" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <ellipse cx="210" cy="233" rx="178" ry="11" fill="rgba(0,0,0,0.13)"/>
-  <path d="M40 185 Q40 212 80 216 L380 216 Q400 216 400 200 L396 185Z" fill="url(#solg)"/>
-  <path d="M40 185 Q40 200 80 204 L380 204 Q398 204 396 192 L396 185Z" fill="white" opacity="0.45"/>
-  <path d="M62 185 Q57 162 72 141 L132 96 Q162 76 202 73 L292 69 Q332 66 362 81 L386 101 Q396 121 396 151 L396 185Z" fill="url(#sg)"/>
-  <path d="M62 185 Q57 162 72 141 L132 96 Q162 76 202 73 L292 69 Q332 66 362 81 L386 101 Q396 121 396 151 L396 185Z" fill="url(#fp)" opacity="0.75"/>
-  <path d="M62 185 Q52 172 60 152 L92 121 Q112 109 132 106 L147 104 Q157 131 157 161 L157 185Z" fill="${dk40}" opacity="0.88"/>
-  <path d="M232 91 L312 81 Q342 79 362 96 L372 121 Q342 141 312 146 L232 149Z" fill="${lt20}" opacity="0.78"/>
-  <text x="270" y="129" font-size="41" font-weight="900" fill="white" opacity="0.88" font-family="Arial Black" transform="skewX(-5)">N</text>
-  <path d="M157 104 L232 91 L232 149 L157 161Z" fill="${lt30}" opacity="0.58"/>
-  ${[106,116,126,136,146].map((y,i)=>`<line x1="${158+i*2}" y1="${y}" x2="${228-i}" y2="${y-2}" stroke="white" stroke-width="2" opacity="0.78"/>`).join('')}
-  <path d="M62 185 Q57 176 62 166 L77 156 Q92 149 107 151 L157 161 L157 185Z" fill="${lt20}" opacity="0.68"/>
-  <rect x="380" y="121" width="14" height="49" rx="4" fill="${lt30}" opacity="0.88"/>
-  <text x="383" y="149" font-size="8" fill="${dk40}" font-weight="bold" writing-mode="vertical-rl">NB</text>
-  <rect x="82" y="211" width="298" height="4" rx="2" fill="#9e9e9e" opacity="0.45"/>
-  </svg>`;
-}
-
-function bagSVG(c, w, h){
-  const dk35=dk(c,35), lt35=lt(c,35);
-  return `<svg width="${w}" height="${h}" viewBox="0 0 300 280">
-  <defs>
-    <linearGradient id="bg2" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${lt35}"/><stop offset="100%" stop-color="${dk35}"/>
-    </linearGradient>
-    <pattern id="bp2" x="0" y="0" width="10" height="10" patternUnits="userSpaceOnUse">
-      <path d="M0,5L5,0L10,5L5,10Z" fill="none" stroke="rgba(255,255,255,0.11)" stroke-width="1"/>
-    </pattern>
-  </defs>
-  <ellipse cx="150" cy="271" rx="118" ry="10" fill="rgba(0,0,0,0.11)"/>
-  <path d="M96 91 Q96 56 150 56 Q204 56 204 91" fill="none" stroke="${dk35}" stroke-width="12" stroke-linecap="round"/>
-  <path d="M96 91 Q96 56 150 56 Q204 56 204 91" fill="none" stroke="${lt(c,20)}" stroke-width="7" stroke-linecap="round"/>
-  <rect x="46" y="91" width="208" height="163" rx="13" fill="url(#bg2)"/>
-  <rect x="46" y="91" width="208" height="163" rx="13" fill="url(#bp2)"/>
-  <path d="M46 91 L46 156 Q100 176 150 176 Q200 176 254 156 L254 91Z" fill="${dk35}" opacity="0.18"/>
-  <rect x="76" y="166" width="148" height="63" rx="8" fill="${dk35}" opacity="0.14"/>
-  <rect x="76" y="166" width="148" height="2" fill="rgba(255,255,255,0.28)"/>
-  <line x1="91" y1="131" x2="209" y2="131" stroke="rgba(255,255,255,0.55)" stroke-width="1.8" stroke-dasharray="6,3"/>
-  <circle cx="150" cy="131" r="5" fill="${lt35}" stroke="${dk35}" stroke-width="1.5"/>
-  <rect x="131" y="231" width="38" height="14" rx="3" fill="rgba(255,255,255,0.23)"/>
-  <text x="150" y="242" text-anchor="middle" font-size="7" font-weight="700" fill="white">TLC</text>
-  <rect x="56" y="101" width="188" height="143" rx="9" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
-  </svg>`;
-}
-
-function bpSVG(c, w, h){
-  const dk35=dk(c,35), lt35=lt(c,35);
-  return `<svg width="${w}" height="${h}" viewBox="0 0 260 320">
-  <defs>
-    <linearGradient id="bpg" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${lt35}"/><stop offset="100%" stop-color="${dk35}"/>
-    </linearGradient>
-  </defs>
-  <ellipse cx="130" cy="313" rx="98" ry="9" fill="rgba(0,0,0,0.11)"/>
-  <path d="M76 81 Q66 141 71 201" fill="none" stroke="${dk35}" stroke-width="10" stroke-linecap="round"/>
-  <path d="M184 81 Q194 141 189 201" fill="none" stroke="${dk35}" stroke-width="10" stroke-linecap="round"/>
-  <rect x="41" y="56" width="178" height="233" rx="20" fill="url(#bpg)"/>
-  <rect x="61" y="181" width="138" height="93" rx="12" fill="${dk35}" opacity="0.19"/>
-  <rect x="61" y="181" width="138" height="2" fill="rgba(255,255,255,0.28)"/>
-  <rect x="76" y="101" width="108" height="63" rx="8" fill="${dk35}" opacity="0.14"/>
-  <line x1="76" y1="146" x2="184" y2="146" stroke="rgba(255,255,255,0.48)" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <line x1="76" y1="253" x2="184" y2="253" stroke="rgba(255,255,255,0.48)" stroke-width="1.5" stroke-dasharray="5,3"/>
-  <rect x="116" y="39" width="28" height="21" rx="6" fill="${dk35}" opacity="0.68"/>
-  <rect x="111" y="261" width="38" height="14" rx="3" fill="rgba(255,255,255,0.23)"/>
-  <text x="130" y="272" text-anchor="middle" font-size="7" font-weight="700" fill="white">TLC</text>
-  <rect x="51" y="66" width="158" height="213" rx="16" fill="none" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" stroke-dasharray="4,3"/>
-  </svg>`;
-}
-
-// ─────────────── 3D VIEW ───────────────
+/* ══════════════ 3D VIEW ══════════════ */
 function render3d(){
-  const f=fab(); if(!f) return;
+  const f=fab();if(!f)return;
   col3d=f.color;
-  document.getElementById('shoe3d-inner').innerHTML = shoeSVG(f.color, 360, 210);
-  document.getElementById('spec3d').innerHTML = `
-    <div><div class="k">供應商</div><div class="v">${f.supplier}</div></div>
-    <div><div class="k">寬度</div><div class="v">${f.width}</div></div>
-    <div><div class="k">單價</div><div class="v" style="color:var(--blue)">${f.price}</div></div>
-    <div><div class="k">交期(樣品)</div><div class="v">${f.lead} 天</div></div>
-    <div><div class="k">MSI</div><div class="v">${f.msi}</div></div>
-    <div><div class="k">交期(量產)</div><div class="v">28 天</div></div>`;
-  document.getElementById('mat3d').textContent = f.content;
-  document.getElementById('mat3d-sub').textContent = f.name+' · '+f.id;
+  document.getElementById('shoe3d-inner').innerHTML=nb574(f.color,440,230);
+  const sg=document.getElementById('spec3d');
+  const sl=curLang==='en';
+  sg.innerHTML=`
+    <div><div class="k">${sl?'Supplier':'供應商'}</div><div class="v" style="font-size:11px">${f.supplier}</div></div>
+    <div><div class="k">${sl?'Width':'寬度'}</div><div class="v">${f.width}</div></div>
+    <div><div class="k">${sl?'Price':'單價'}</div><div class="v" style="color:var(--blue)">${f.price}</div></div>
+    <div><div class="k">${sl?'S.Lead':'交期(樣)'}</div><div class="v">${f.lead}${sl?' d':' 天'}</div></div>
+    <div><div class="k">${sl?'MSI':'MSI'}</div><div class="v">${f.msi}</div></div>
+    <div><div class="k">${sl?'P.Lead':'量產交期'}</div><div class="v">28${sl?' d':' 天'}</div></div>`;
+  document.getElementById('mat3d').textContent=f.content;
+  document.getElementById('mat3d-sub').textContent=f.name+' · '+f.id;
   renderColBtns();
 }
 
 function renderColBtns(){
-  document.getElementById('col-row').innerHTML = COLORS_3D.map(c=>`
+  document.getElementById('col-row').innerHTML=COLORS_3D.map(c=>`
     <div class="col-btn ${c===col3d?'active':''}" style="background:${c}" onclick="applyCol('${c}')"></div>`).join('');
 }
 
 function applyCol(c){
   col3d=c;
-  document.getElementById('shoe3d-inner').innerHTML = shoeSVG(c, 360, 210);
+  document.getElementById('shoe3d-inner').innerHTML=nb574(c,440,230);
   renderColBtns();
 }
 
 function toggleRot(btn){
   rotating=!rotating;
   const s=document.getElementById('shoe3d');
-  s.style.animationPlayState = rotating?'running':'paused';
-  btn.textContent = rotating?'⏸ 暫停':'▶ 播放';
+  s.style.animationPlayState=rotating?'running':'paused';
+  btn.textContent=rotating?t('pause'):t('play');
+  btn.setAttribute('data-i18n',rotating?'pause':'play');
 }
 
-function setAngle(a, btn){
+function setAngle(a,btn){
   document.querySelectorAll('.ang-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const s=document.getElementById('shoe3d');
-  const map={front:'rotateY(0deg) rotateX(6deg)', side:'rotateY(90deg) rotateX(6deg)',
-              top:'rotateY(30deg) rotateX(60deg)', back:'rotateY(180deg) rotateX(6deg)'};
-  s.style.animation='none'; s.style.transform=map[a];
+  const map={front:'rotateY(0deg) rotateX(6deg)',side:'rotateY(90deg) rotateX(6deg)',top:'rotateY(30deg) rotateX(60deg)',back:'rotateY(180deg) rotateX(6deg)'};
+  s.style.animation='none';s.style.transform=map[a];
   rotating=false;
-  document.getElementById('rot-btn').textContent='▶ 播放';
+  document.getElementById('rot-btn').textContent=t('play');
+  document.getElementById('rot-btn').setAttribute('data-i18n','play');
 }
 
-// 3D shoe click to toggle
-document.addEventListener('DOMContentLoaded',()=>{
-  document.getElementById('shoe3d').addEventListener('click',()=>toggleRot(document.getElementById('rot-btn')));
-});
-
-// ─────────────── INIT ───────────────
+/* ══════════════ INIT ══════════════ */
+document.getElementById('shoe3d').addEventListener('click',()=>toggleRot(document.getElementById('rot-btn')));
 renderGrid(FABRICS);
 </script>
 </body>
