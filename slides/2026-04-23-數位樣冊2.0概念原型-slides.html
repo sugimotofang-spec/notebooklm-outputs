@@ -734,7 +734,7 @@ function goTab(tab,btn){
   document.getElementById('tab-'+tab).classList.add('active');
   btn.classList.add('active');
   if(tab==='simulator'){renderMini();updateSimToolbar();}
-  if(tab==='view3d'){updateInfoPanels();document.dispatchEvent(new Event('tlcTab3dOpen'));}
+  if(tab==='view3d'){updateInfoPanels();const _f=fab();document.dispatchEvent(new CustomEvent('tlcTab3dOpen',{detail:{id:selId,color:_f.color,tex:_f.tex,name:_f.name}}));}
 }
 
 /* ══════════ LIBRARY ══════════ */
@@ -763,7 +763,7 @@ function renderGrid(list){
     </div>`).join('');
 }
 
-function selFab(id){selId=id;col3d=fab().color;renderGrid(visibleFabs);renderMini();updateSimToolbar();updateInfoPanels();applyOverlays();document.dispatchEvent(new CustomEvent('tlcFabricChanged',{detail:{id}}));}
+function selFab(id){selId=id;col3d=fab().color;renderGrid(visibleFabs);renderMini();updateSimToolbar();updateInfoPanels();applyOverlays();const _f=fab();document.dispatchEvent(new CustomEvent('tlcFabricChanged',{detail:{id,color:_f.color,tex:_f.tex,name:_f.name}}));}
 function quickSim(id){selId=id;col3d=fab().color;goTab('simulator',document.querySelectorAll('.tab-btn')[1]);}
 function filterBy(type,chip){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');
@@ -879,6 +879,7 @@ let renderer, scene, camera, controls;
 let upperMats = [];
 let v3d = {roughness:0.75, metalness:0.05, scale:1};
 let initialized = false;
+let lastFab = null;   // stores last fabric data from events
 
 function genTex(color, type, scale) {
   const S = 512;
@@ -927,11 +928,8 @@ function genTex(color, type, scale) {
   return cv;
 }
 
-function apply3dFabric() {
-  const fabrics=window.FABRICS, selId=window.selId;
-  if(!fabrics||!selId||upperMats.length===0) return;
-  const f=fabrics.find(x=>x.id===selId);
-  if(!f) return;
+function applyFabData(f) {
+  if(!f || upperMats.length===0) return;
   const type=f.tex.includes('woven')?'woven':f.tex.includes('knit')?'knit':'mesh';
   const cv=genTex(f.color,type,v3d.scale);
   const tex=new THREE.CanvasTexture(cv);
@@ -947,6 +945,7 @@ function apply3dFabric() {
   const badge=document.getElementById('v3d-fab-badge');
   if(badge) badge.textContent=f.name;
 }
+function apply3dFabric(){applyFabData(lastFab);}
 
 window.update3dMat=function(prop,val){
   if(prop==='roughness'){v3d.roughness=val;document.getElementById('v3d-roughness-v').textContent=val.toFixed(2);}
@@ -1048,8 +1047,15 @@ function initThreeJS(){
   (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
 }
 
-document.addEventListener('tlcTab3dOpen',()=>{setTimeout(initThreeJS,50);apply3dFabric();});
-document.addEventListener('tlcFabricChanged',apply3dFabric);
+document.addEventListener('tlcTab3dOpen',e=>{
+  if(e.detail) lastFab=e.detail;
+  setTimeout(initThreeJS,50);
+  apply3dFabric();
+});
+document.addEventListener('tlcFabricChanged',e=>{
+  if(e.detail) lastFab=e.detail;
+  applyFabData(lastFab);
+});
 document.addEventListener('DOMContentLoaded',()=>{
   if(document.getElementById('tab-view3d')?.classList.contains('active')) setTimeout(initThreeJS,100);
 });
