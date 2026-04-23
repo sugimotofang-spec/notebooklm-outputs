@@ -5,15 +5,11 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
 <title>TLC 數位樣冊 2.0</title>
 <style>
-:root {
-  --blue:#1a5fa8; --teal:#2bb5c8; --bg:#f0f2f6;
-  --card:#fff; --text:#1a1a2e; --muted:#6b7280; --border:#e5e7eb;
-  --green:#10b981; --red:#ef4444; --amber:#f59e0b;
-}
+:root{--blue:#1a5fa8;--teal:#2bb5c8;--bg:#f0f2f6;--text:#1a1a2e;--muted:#6b7280;--border:#e5e7eb;--green:#10b981;--red:#ef4444;--amber:#f59e0b}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:-apple-system,'Segoe UI','Microsoft JhengHei','PingFang TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
 
-/* HEADER */
+/* ── HEADER ── */
 header{background:#fff;border-bottom:1px solid var(--border);padding:10px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 1px 6px rgba(0,0,0,.07)}
 .logo{display:flex;align-items:center;gap:10px}
 .logo-name{font-size:17px;font-weight:800;color:var(--blue)}
@@ -25,23 +21,21 @@ header{background:#fff;border-bottom:1px solid var(--border);padding:10px 24px;d
 .lang-btn{padding:6px 14px;border-radius:20px;border:1.5px solid var(--border);background:#fff;font-size:12px;font-weight:700;cursor:pointer;transition:all .2s;color:var(--blue)}
 .lang-btn:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-/* NAV */
-nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex;gap:0}
+/* ── NAV ── */
+nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display:flex}
 .tab-btn{padding:13px 22px;border:none;background:none;cursor:pointer;font-size:14px;font-weight:500;color:var(--muted);border-bottom:3px solid transparent;transition:all .2s;display:flex;align-items:center;gap:7px}
 .tab-btn.active{color:var(--blue);border-bottom-color:var(--blue)}
 .tab-btn:hover{color:var(--blue);background:rgba(26,95,168,.04)}
 
-/* MAIN */
+/* ── LAYOUT ── */
 .main{max-width:1440px;margin:0 auto;padding:24px}
 .panel{display:none}.panel.active{display:block}
-
-/* CHIPS */
 .toolbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px}
 .chips{display:flex;gap:8px;flex-wrap:wrap}
 .chip{padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:#fff;font-size:12px;cursor:pointer;font-weight:500;transition:all .2s}
 .chip.active,.chip:hover{background:var(--blue);color:#fff;border-color:var(--blue)}
 
-/* FABRIC GRID */
+/* ── FABRIC GRID ── */
 .fabric-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(255px,1fr));gap:18px}
 .fabric-card{background:#fff;border-radius:12px;overflow:hidden;box-shadow:0 1px 4px rgba(0,0,0,.06);cursor:pointer;transition:all .25s;border:2px solid transparent}
 .fabric-card:hover{transform:translateY(-3px);box-shadow:0 8px 24px rgba(0,0,0,.11);border-color:var(--blue)}
@@ -62,8 +56,8 @@ nav{background:#fff;border-bottom:1px solid var(--border);padding:0 24px;display
 .sim-btn{background:var(--blue);color:#fff;border:none;border-radius:6px;padding:5px 12px;font-size:12px;cursor:pointer;font-weight:600;transition:background .2s}
 .sim-btn:hover{background:#1249a0}
 
-/* SIMULATOR */
-.sim-layout{display:grid;grid-template-columns:270px 1fr;gap:22px}
+/* ── SIMULATOR ── */
+.sim-layout{display:grid;grid-template-columns:270px 1fr;gap:22px;min-height:560px}
 .sidebar{background:#fff;border-radius:12px;padding:18px;box-shadow:0 1px 4px rgba(0,0,0,.06);display:flex;flex-direction:column;gap:16px}
 .sec-lbl{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:8px}
 .mini-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
@@ -87,29 +81,100 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .act-btn:hover{border-color:var(--blue);color:var(--blue)}
 .act-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue)}
 .act-btn.primary:hover{background:#1249a0}
-.product-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:32px;background:linear-gradient(135deg,#f8fafc,#eef2f7);position:relative;min-height:380px}
-.prod-wrap{position:relative;filter:drop-shadow(0 12px 28px rgba(0,0,0,.18));transition:transform .3s}
-.prod-wrap:hover{transform:scale(1.02)}
-.float-tag{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.09);display:flex;align-items:center;gap:5px;white-space:nowrap}
+
+/* ── SHOE VIEWER (image + blend overlays) ── */
+.product-stage{flex:1;display:flex;align-items:center;justify-content:center;padding:24px;background:linear-gradient(135deg,#f8fafc,#eef2f7);position:relative;min-height:420px}
+
+/* Upload zone */
+.upload-zone{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;border:2px dashed var(--border);border-radius:16px;padding:48px 32px;cursor:pointer;transition:all .2s;background:#fff;min-width:380px}
+.upload-zone:hover,.upload-zone.dragover{border-color:var(--blue);background:rgba(26,95,168,.03)}
+.upload-zone .uz-icon{font-size:48px}
+.upload-zone .uz-title{font-size:15px;font-weight:700;color:var(--text)}
+.upload-zone .uz-sub{font-size:12px;color:var(--muted);text-align:center}
+.upload-zone .uz-btn{margin-top:4px;padding:8px 20px;background:var(--blue);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer}
+#shoe-file{display:none}
+
+/* Shoe viewer with overlays */
+.shoe-viewer{
+  position:relative;
+  display:inline-block;
+  isolation:isolate; /* critical for mix-blend-mode to scope correctly */
+  border-radius:12px;
+  overflow:hidden;
+  box-shadow:0 16px 48px rgba(0,0,0,.22);
+  transition:transform .3s;
+}
+.shoe-viewer:hover{transform:scale(1.01)}
+.shoe-viewer img{display:block;max-height:380px;max-width:100%;border-radius:12px}
+
+/* The color overlay: uses mix-blend-mode:color so white sole stays white,
+   only the darker upper gets tinted with the fabric hue */
+.ov-color{
+  position:absolute;inset:0;
+  mix-blend-mode:color;
+  border-radius:12px;
+  pointer-events:none;
+  transition:background .35s, opacity .35s;
+}
+/* Fabric texture overlay in soft-light: adds subtle surface structure */
+.ov-tex{
+  position:absolute;inset:0;
+  mix-blend-mode:soft-light;
+  border-radius:12px;
+  pointer-events:none;
+  transition:opacity .3s;
+}
+/* Gloss highlight overlay in screen: simulates sheen */
+.ov-gloss{
+  position:absolute;inset:0;
+  mix-blend-mode:screen;
+  border-radius:12px;
+  pointer-events:none;
+  background:radial-gradient(ellipse 70% 45% at 38% 30%, rgba(255,255,255,.75) 0%, transparent 65%);
+  transition:opacity .3s;
+}
+
+/* Texture patterns for ov-tex */
+.tex-woven-pat{background-image:repeating-linear-gradient(45deg,rgba(0,0,0,.18) 0,rgba(0,0,0,.18) 1.5px,transparent 1.5px,transparent 6px),repeating-linear-gradient(-45deg,rgba(0,0,0,.12) 0,rgba(0,0,0,.12) 1.5px,transparent 1.5px,transparent 6px)}
+.tex-knit-pat{background-image:radial-gradient(ellipse 6px 4px at 6px 4px,rgba(0,0,0,.2) 40%,transparent 40%),radial-gradient(ellipse 6px 4px at 0 0,rgba(0,0,0,.12) 40%,transparent 40%);background-size:12px 8px}
+.tex-mesh-pat{background-image:linear-gradient(rgba(0,0,0,.14) 1px,transparent 1px),linear-gradient(90deg,rgba(0,0,0,.14) 1px,transparent 1px);background-size:5px 5px}
+
+/* float annotation tags */
+.float-tag{position:absolute;background:#fff;border:1px solid var(--border);border-radius:8px;padding:5px 10px;font-size:11px;font-weight:600;box-shadow:0 2px 8px rgba(0,0,0,.09);display:flex;align-items:center;gap:5px;white-space:nowrap;z-index:10}
 .float-tag::before{content:'';width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0}
+
 .gen-overlay{position:absolute;inset:0;background:rgba(255,255,255,.92);display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;font-size:14px;font-weight:600;color:var(--blue);opacity:0;pointer-events:none;transition:opacity .3s;border-radius:12px}
 .gen-overlay.show{opacity:1;pointer-events:all}
 .spinner{width:34px;height:34px;border:3px solid rgba(26,95,168,.2);border-top-color:var(--blue);border-radius:50%;animation:spin .8s linear infinite}
 @keyframes spin{to{transform:rotate(360deg)}}
 
-/* 3D */
+/* ── 3D VIEW ── */
 .v3d-layout{display:grid;grid-template-columns:1fr 300px;gap:22px}
 .stage3d{background:linear-gradient(135deg,#0d1b2a,#1b2f50,#0f3460);border-radius:16px;display:flex;align-items:center;justify-content:center;min-height:500px;position:relative;overflow:hidden}
 .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
 .glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(43,181,200,.13) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
-.scene{perspective:1000px;position:relative;z-index:1}
+.scene{perspective:1200px;position:relative;z-index:1}
 .shoe3d{transform-style:preserve-3d;animation:rot3d 9s linear infinite;cursor:pointer}
 .shoe3d:hover{animation-play-state:paused}
-@keyframes rot3d{0%{transform:rotateY(0deg) rotateX(6deg)}100%{transform:rotateY(360deg) rotateX(6deg)}}
-.shoe-shadow{position:absolute;bottom:-28px;left:50%;transform:translateX(-50%) rotateX(90deg);width:350px;height:50px;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,transparent 70%);border-radius:50%}
+@keyframes rot3d{0%{transform:rotateY(0deg) rotateX(5deg)}100%{transform:rotateY(360deg) rotateX(5deg)}}
+.shoe-shadow{position:absolute;bottom:-30px;left:50%;transform:translateX(-50%) rotateX(90deg);width:380px;height:50px;background:radial-gradient(ellipse,rgba(0,0,0,.45) 0%,transparent 70%);border-radius:50%}
 .angle-bar{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);display:flex;gap:7px;z-index:10}
 .ang-btn{background:rgba(255,255,255,.13);color:#fff;border:1px solid rgba(255,255,255,.2);border-radius:6px;padding:6px 14px;font-size:11px;cursor:pointer;backdrop-filter:blur(8px);transition:background .2s}
 .ang-btn.active,.ang-btn:hover{background:rgba(26,95,168,.65)}
+
+/* 3D shoe viewer */
+.shoe3d-viewer{
+  position:relative;isolation:isolate;
+  border-radius:10px;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.6);
+}
+.shoe3d-viewer img{display:block;max-height:300px;border-radius:10px}
+
+/* upload prompt inside 3d stage */
+.upload-hint-3d{color:rgba(255,255,255,.55);text-align:center;font-size:13px;padding:20px;max-width:220px}
+.upload-hint-3d .hint-icon{font-size:36px;margin-bottom:12px}
+.upload-hint-3d .hint-link{color:var(--teal);cursor:pointer;font-weight:600;text-decoration:underline}
+
 .info-cards{display:flex;flex-direction:column;gap:14px}
 .icard{background:#fff;border-radius:12px;padding:16px;box-shadow:0 1px 4px rgba(0,0,0,.06)}
 .icard-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:11px}
@@ -122,7 +187,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .cert-item{display:flex;align-items:center;gap:8px;font-size:12px}
 .cert-tag{font-size:10px;font-weight:700;padding:2px 7px;border-radius:4px;color:#fff;flex-shrink:0}
 
-/* COMPARISON */
+/* ── COMPARISON ── */
 .comp-header{text-align:center;margin-bottom:28px}
 .comp-title{font-size:26px;font-weight:800;margin-bottom:7px}
 .comp-sub{color:var(--muted);font-size:14px}
@@ -148,14 +213,13 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .ph-list{list-style:none;display:flex;flex-direction:column;gap:5px}
 .ph-list li{font-size:12px;padding-left:15px;position:relative}
 .ph-list li::before{content:'→';position:absolute;left:0;color:var(--muted)}
-
-/* TOAST */
 .toast{position:fixed;bottom:22px;right:22px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:999;opacity:0;transform:translateY(8px);transition:all .28s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
 </style>
 </head>
 <body>
 
+<!-- HEADER -->
 <header>
   <div class="logo">
     <svg width="38" height="38" viewBox="0 0 38 38"><rect width="38" height="38" rx="7" fill="#1a5fa8"/><rect x="7" y="11" width="24" height="3" rx="1.5" fill="#fff"/><rect x="7" y="17" width="18" height="3" rx="1.5" fill="#fff"/><rect x="7" y="23" width="24" height="3" rx="1.5" fill="#2bb5c8"/></svg>
@@ -168,67 +232,70 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
   <div class="header-right">
     <div class="search-wrap">
       <svg width="14" height="14" fill="none" stroke="#9ca3af" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-      <input type="text" id="search-input" data-i18n-placeholder="searchPlaceholder" placeholder="搜尋代號、材質、顏色…" oninput="searchFabrics(this.value)">
+      <input type="text" id="search-input" data-i18n-placeholder="searchPH" placeholder="搜尋代號、材質、顏色…" oninput="searchFabrics(this.value)">
     </div>
     <button class="lang-btn" onclick="toggleLang()" id="lang-btn">EN</button>
   </div>
 </header>
 
 <nav>
-  <button class="tab-btn active" onclick="goTab('library',this)"><span>🗂️</span> <span data-i18n="tabLibrary">布料庫</span></button>
-  <button class="tab-btn" onclick="goTab('simulator',this)"><span>👟</span> <span data-i18n="tabSim">產品模擬</span></button>
-  <button class="tab-btn" onclick="goTab('view3d',this)"><span>🔄</span> <span data-i18n="tab3d">3D 預覽</span></button>
-  <button class="tab-btn" onclick="goTab('comparison',this)"><span>📊</span> <span data-i18n="tabComp">競品分析</span></button>
+  <button class="tab-btn active" onclick="goTab('library',this)">🗂️ <span data-i18n="tabLib">布料庫</span></button>
+  <button class="tab-btn" onclick="goTab('simulator',this)">👟 <span data-i18n="tabSim">產品模擬</span></button>
+  <button class="tab-btn" onclick="goTab('view3d',this)">🔄 <span data-i18n="tab3d">3D 預覽</span></button>
+  <button class="tab-btn" onclick="goTab('comparison',this)">📊 <span data-i18n="tabComp">競品分析</span></button>
 </nav>
 
 <div class="main">
 
-<!-- ── TAB 1: 布料庫 ── -->
+<!-- ═══ TAB 1: 布料庫 ═══ -->
 <div id="tab-library" class="panel active">
   <div class="toolbar">
     <div class="chips">
-      <span class="chip active" onclick="filterBy('all',this)" data-i18n="filterAll">全部</span>
-      <span class="chip" onclick="filterBy('woven',this)" data-i18n="filterWoven">Woven 平織</span>
-      <span class="chip" onclick="filterBy('knit',this)" data-i18n="filterKnit">Knit 針織</span>
-      <span class="chip" onclick="filterBy('mesh',this)" data-i18n="filterMesh">Mesh 網眼</span>
-      <span class="chip" onclick="filterBy('recycled',this)" data-i18n="filterRecycled">♻️ 再生材料</span>
+      <span class="chip active" onclick="filterBy('all',this)" data-i18n="fAll">全部</span>
+      <span class="chip" onclick="filterBy('woven',this)" data-i18n="fWoven">Woven 平織</span>
+      <span class="chip" onclick="filterBy('knit',this)" data-i18n="fKnit">Knit 針織</span>
+      <span class="chip" onclick="filterBy('mesh',this)" data-i18n="fMesh">Mesh 網眼</span>
+      <span class="chip" onclick="filterBy('recycled',this)" data-i18n="fRec">♻️ 再生材料</span>
     </div>
     <span style="font-size:13px;color:var(--muted)"><span data-i18n="showing">顯示</span> <strong id="cnt">0</strong> <span data-i18n="items">件</span></span>
   </div>
   <div class="fabric-grid" id="fab-grid"></div>
 </div>
 
-<!-- ── TAB 2: 產品模擬 ── -->
+<!-- ═══ TAB 2: 產品模擬 ═══ -->
 <div id="tab-simulator" class="panel">
   <div class="sim-layout">
+
+    <!-- Sidebar -->
     <div class="sidebar">
       <div>
-        <div class="sec-lbl" data-i18n="selectFabric">選擇布料</div>
+        <div class="sec-lbl" data-i18n="selFab">選擇布料</div>
         <div class="mini-grid" id="mini-grid"></div>
       </div>
       <div class="divider"></div>
       <div>
-        <div class="sec-lbl" data-i18n="adjustMaterial">材質調整</div>
+        <div class="sec-lbl" data-i18n="adjMat">材質調整</div>
         <div class="param-row">
-          <div class="param-lbl"><span data-i18n="softness">柔軟度</span><span class="param-val" id="v-soft">65%</span></div>
-          <input type="range" min="0" max="100" value="65" oninput="setParam('soft',this.value)">
+          <div class="param-lbl"><span data-i18n="pSoft">柔軟度</span><span class="param-val" id="v-soft">65%</span></div>
+          <input type="range" min="0" max="100" value="65" oninput="setParam('soft',+this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span data-i18n="texDensity">紋理密度</span><span class="param-val" id="v-tex">50%</span></div>
-          <input type="range" min="0" max="100" value="50" oninput="setParam('tex',this.value)">
+          <div class="param-lbl"><span data-i18n="pTex">紋理密度</span><span class="param-val" id="v-tex">50%</span></div>
+          <input type="range" min="0" max="100" value="50" oninput="setParam('tex',+this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span data-i18n="gloss">光澤感</span><span class="param-val" id="v-gloss">30%</span></div>
-          <input type="range" min="0" max="100" value="30" oninput="setParam('gloss',this.value)">
+          <div class="param-lbl"><span data-i18n="pGloss">光澤感</span><span class="param-val" id="v-gloss">30%</span></div>
+          <input type="range" min="0" max="100" value="30" oninput="setParam('gloss',+this.value)">
         </div>
         <div class="param-row">
-          <div class="param-lbl"><span data-i18n="saturation">飽和度</span><span class="param-val" id="v-sat">80%</span></div>
-          <input type="range" min="0" max="100" value="80" oninput="setParam('sat',this.value)">
+          <div class="param-lbl"><span data-i18n="pSat">色彩飽和</span><span class="param-val" id="v-sat">80%</span></div>
+          <input type="range" min="0" max="100" value="80" oninput="setParam('sat',+this.value)">
         </div>
       </div>
       <button class="gen-btn" onclick="doGenerate()" data-i18n="genBtn">✨ AI 生成模擬圖</button>
     </div>
 
+    <!-- Main canvas -->
     <div class="sim-main">
       <div class="sim-toolbar">
         <div class="sim-fab">
@@ -239,53 +306,95 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
           </div>
         </div>
         <div class="act-btns">
+          <button class="act-btn" onclick="triggerUpload()">📸 <span data-i18n="uploadImg">上傳鞋款圖</span></button>
           <button class="act-btn" onclick="doShare()">📤 <span data-i18n="share">分享</span></button>
-          <button class="act-btn" onclick="doDownload()">💾 <span data-i18n="download">下載</span></button>
-          <button class="act-btn primary" onclick="goTab('view3d',document.querySelectorAll('.tab-btn')[2])">🔄 <span data-i18n="view3dBtn">3D 預覽</span></button>
+          <button class="act-btn primary" onclick="goTab('view3d',document.querySelectorAll('.tab-btn')[2])">🔄 <span data-i18n="v3dBtn">3D 預覽</span></button>
         </div>
       </div>
+
       <div class="product-stage" id="pstage">
-        <div class="gen-overlay" id="gen-ov">
+        <input type="file" accept="image/*" id="shoe-file" onchange="handleUpload(this.files[0])">
+
+        <!-- Upload prompt -->
+        <div class="upload-zone" id="upload-zone"
+             onclick="triggerUpload()"
+             ondragover="event.preventDefault();this.classList.add('dragover')"
+             ondragleave="this.classList.remove('dragover')"
+             ondrop="event.preventDefault();this.classList.remove('dragover');handleUpload(event.dataTransfer.files[0])">
+          <div class="uz-icon">👟</div>
+          <div class="uz-title" data-i18n="uzTitle">上傳 NB 574 鞋款圖片</div>
+          <div class="uz-sub" data-i18n="uzSub">拖放圖片到這裡，或點擊選擇<br>Drop NB 574 image here or click to browse</div>
+          <button class="uz-btn" data-i18n="uzBtn">選擇圖片 / Browse</button>
+        </div>
+
+        <!-- Shoe viewer (hidden until image uploaded) -->
+        <div id="shoe-display" style="display:none;position:relative">
+          <div class="shoe-viewer" id="shoe-viewer">
+            <img id="shoe-img-sim" src="" alt="NB 574">
+            <div class="ov-color" id="ov-color-sim"></div>
+            <div class="ov-tex"  id="ov-tex-sim"></div>
+            <div class="ov-gloss" id="ov-gloss-sim"></div>
+          </div>
+          <!-- floating labels -->
+          <div class="float-tag" style="top:-16px;right:-108px" id="ft-mat">🧵 100% Recycled PET</div>
+          <div class="float-tag" style="bottom:12px;left:-88px" id="ft-code">📋 EFJPT027</div>
+        </div>
+
+        <!-- AI generating overlay -->
+        <div class="gen-overlay" id="gen-ov" style="pointer-events:none">
           <div class="spinner"></div>
           <span data-i18n="generating">AI 正在生成模擬圖…</span>
-        </div>
-        <div style="position:relative">
-          <div class="prod-wrap" id="prod-wrap"></div>
-          <div class="float-tag" style="top:-18px;right:-110px" id="ft-mat">🧵 100% Recycled PET</div>
-          <div class="float-tag" style="bottom:10px;left:-90px" id="ft-code">📋 EFJPT027</div>
         </div>
       </div>
     </div>
   </div>
 </div>
 
-<!-- ── TAB 3: 3D 預覽 ── -->
+<!-- ═══ TAB 3: 3D 預覽 ═══ -->
 <div id="tab-view3d" class="panel">
   <div class="v3d-layout">
     <div class="stage3d">
       <div class="grid-bg"></div>
       <div class="glow"></div>
       <div class="scene">
-        <div class="shoe3d" id="shoe3d" title="Click to pause / 點擊暫停">
-          <div id="shoe3d-inner"></div>
+        <div class="shoe3d" id="shoe3d" title="Click to pause">
+
+          <!-- Hint when no image uploaded -->
+          <div id="hint-3d" class="upload-hint-3d">
+            <div class="hint-icon">📸</div>
+            <div data-i18n="hint3d">請先在「產品模擬」頁面上傳鞋款圖片</div>
+            <div style="margin-top:8px"><span class="hint-link" onclick="goTab('simulator',document.querySelectorAll('.tab-btn')[1])">→ <span data-i18n="goSim">前往上傳</span></span></div>
+          </div>
+
+          <!-- 3D shoe viewer (shown after upload) -->
+          <div id="shoe-display-3d" style="display:none">
+            <div class="shoe3d-viewer" id="shoe3d-viewer">
+              <img id="shoe-img-3d" src="" alt="NB 574 3D">
+              <div class="ov-color" id="ov-color-3d"></div>
+              <div class="ov-tex"  id="ov-tex-3d"></div>
+              <div class="ov-gloss" id="ov-gloss-3d"></div>
+            </div>
+          </div>
+
         </div>
-        <div class="shoe-shadow"></div>
+        <div class="shoe-shadow" id="shoe-shadow-3d" style="display:none"></div>
       </div>
       <div class="angle-bar">
-        <button class="ang-btn active" onclick="setAngle('front',this)" data-i18n="angleFront">正面</button>
-        <button class="ang-btn" onclick="setAngle('side',this)" data-i18n="angleSide">側面</button>
-        <button class="ang-btn" onclick="setAngle('top',this)" data-i18n="angleTop">俯視</button>
-        <button class="ang-btn" onclick="setAngle('back',this)" data-i18n="angleBack">背面</button>
+        <button class="ang-btn active" onclick="setAngle('front',this)" data-i18n="angFront">正面</button>
+        <button class="ang-btn" onclick="setAngle('side',this)" data-i18n="angSide">側面</button>
+        <button class="ang-btn" onclick="setAngle('top',this)" data-i18n="angTop">俯視</button>
+        <button class="ang-btn" onclick="setAngle('back',this)" data-i18n="angBack">背面</button>
         <button class="ang-btn" id="rot-btn" onclick="toggleRot(this)" data-i18n="pause">⏸ 暫停</button>
       </div>
     </div>
+
     <div class="info-cards">
       <div class="icard">
         <div class="icard-title" data-i18n="specInfo">規格資訊</div>
         <div class="spec-grid" id="spec3d"></div>
       </div>
       <div class="icard">
-        <div class="icard-title" data-i18n="colorOptions">可選色系</div>
+        <div class="icard-title" data-i18n="colOpts">可選色系</div>
         <div class="color-row" id="col-row"></div>
       </div>
       <div class="icard">
@@ -297,7 +406,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
         </div>
       </div>
       <div class="icard">
-        <div class="icard-title" data-i18n="composition">材料組成</div>
+        <div class="icard-title" data-i18n="comp">材料組成</div>
         <div style="font-size:12px;font-weight:600;margin-bottom:6px" id="mat3d"></div>
         <div style="background:var(--border);height:6px;border-radius:3px;overflow:hidden">
           <div style="width:100%;height:100%;background:linear-gradient(90deg,var(--blue),var(--teal));border-radius:3px"></div>
@@ -308,7 +417,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
   </div>
 </div>
 
-<!-- ── TAB 4: 競品分析 ── -->
+<!-- ═══ TAB 4: 競品分析 ═══ -->
 <div id="tab-comparison" class="panel">
   <div class="comp-header">
     <div class="comp-title" data-i18n="compTitle">數位樣冊功能對比分析</div>
@@ -318,24 +427,24 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
     <div class="ch ch-empty"></div>
     <div class="ch ch-cur"><span data-i18n="colCur">中良數位樣冊</span><div class="ver">v1.0</div></div>
     <div class="ch ch-front">Frontier<div class="ver"><span data-i18n="colRef">競品參考</span></div></div>
-    <div class="ch ch-vision"><span data-i18n="colVision">中良 2.0 願景</span><div class="ver"><span data-i18n="colTarget">目標規劃</span></div></div>
+    <div class="ch ch-vision"><span data-i18n="colVis">中良 2.0 願景</span><div class="ver"><span data-i18n="colTarget">目標規劃</span></div></div>
 
     <div class="cat-row" data-i18n="catBasic">📂 基礎功能</div>
     <div class="cf" data-i18n="f01">布料資訊卡（代號／成份／規格）</div>
     <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
     <div class="cf" data-i18n="f02">進階搜尋與篩選</div>
-    <div class="cv"><span class="par">△</span> <span data-i18n="basic">基本</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> AI</div>
+    <div class="cv"><span class="par">△</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> AI</div>
     <div class="cf" data-i18n="f03">永續認證（GRS / OEKO）</div>
     <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> +CO₂</div>
     <div class="cf" data-i18n="f04">價格與交期</div>
-    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> <span data-i18n="realtime">即時</span></div>
+    <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> <span data-i18n="rt">即時</span></div>
     <div class="cf" data-i18n="f05">多語言（中／英／日）</div>
     <div class="cv"><span class="par">△</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> ×4</div>
 
     <div class="cat-row" data-i18n="catVis">🎨 視覺模擬</div>
     <div class="cf" data-i18n="f11">靜態布料高解析照片</div>
     <div class="cv"><span class="yes">✓</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span></div>
-    <div class="cf" data-i18n="f12">布料貼合產品模擬（鞋款）</div>
+    <div class="cf" data-i18n="f12">布料貼合真實鞋款模擬</div>
     <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span></div><div class="cv vi"><span class="yes">✓</span> NB574</div>
     <div class="cf" data-i18n="f13">3D 全視角旋轉預覽</div>
     <div class="cv"><span class="no">✗</span></div><div class="cv fr"><span class="yes">✓</span> P7</div><div class="cv vi"><span class="yes">✓</span></div>
@@ -379,7 +488,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
       <div class="phase p2">
         <div class="ph-header"><span class="ph-tag">Phase 2</span><span class="ph-name" data-i18n="ph2">視覺模擬（Q4 2026）</span></div>
         <ul class="ph-list">
-          <li data-i18n="ph2a">布料 → NB574 鞋款模擬</li>
+          <li data-i18n="ph2a">布料 → NB574 真實鞋款貼合</li>
           <li data-i18n="ph2b">3D 全視角旋轉預覽</li>
           <li data-i18n="ph2c">顏色配色即時切換</li>
           <li data-i18n="ph2d">材質參數全調整工具</li>
@@ -399,231 +508,176 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
     </div>
   </div>
 </div>
+
 </div><!-- /main -->
 <div class="toast" id="toast"></div>
 
 <script>
-/* ══════════════ DATA ══════════════ */
-const FABRICS = [
-  {id:'EFJPT027',name:'AURES WOVEN',   type:'woven',color:'#e85d8a',content:'100% Recycled Polyester',          price:'US$8.94/SY', msi:14.74,recycled:true, tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFJMT064',name:'VELERO KNIT',   type:'knit', color:'#3a86ff',content:'88% Recycled Nylon / 12% Spandex', price:'US$11.20/SY',msi:12.30,recycled:true, tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFMSH018',name:'AEROMESH PLUS', type:'mesh', color:'#06d6a0',content:'100% Polyester',                   price:'US$6.50/SY', msi:8.90, recycled:false,tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFWVN042',name:'TERRA WOVEN',   type:'woven',color:'#8b5e3c',content:'60% Recycled Cotton / 40% Polyester',price:'US$9.80/SY',msi:15.20,recycled:true, tex:'tx-woven',lead:14,width:'54"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFKNT031',name:'CLOUD KNIT',    type:'knit', color:'#f4a261',content:'80% Recycled Polyester / 20% Elastane',price:'US$10.45/SY',msi:13.10,recycled:true,tex:'tx-knit',lead:12,width:'58"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFMSH025',name:'ULTRA MESH',    type:'mesh', color:'#9b5de5',content:'100% Recycled Polyester',          price:'US$7.30/SY', msi:9.50, recycled:true, tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFWVN055',name:'NERO WOVEN',    type:'woven',color:'#2b2d42',content:'100% Nylon',                       price:'US$12.60/SY',msi:16.80,recycled:false,tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
-  {id:'EFKNT044',name:'FLEX KNIT PRO', type:'knit', color:'#ef233c',content:'92% Recycled Polyester / 8% Spandex',price:'US$9.15/SY',msi:11.90,recycled:true,tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
+/* ══════════ DATA ══════════ */
+const FABRICS=[
+  {id:'EFJPT027',name:'AURES WOVEN',   type:'woven',color:'#e85d8a',content:'100% Recycled Polyester',              price:'US$8.94/SY', msi:14.74,recycled:true, tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFJMT064',name:'VELERO KNIT',   type:'knit', color:'#3a86ff',content:'88% Recycled Nylon / 12% Spandex',    price:'US$11.20/SY',msi:12.30,recycled:true, tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFMSH018',name:'AEROMESH PLUS', type:'mesh', color:'#06d6a0',content:'100% Polyester',                      price:'US$6.50/SY', msi:8.90, recycled:false,tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFWVN042',name:'TERRA WOVEN',   type:'woven',color:'#8b5e3c',content:'60% Recycled Cotton / 40% Polyester', price:'US$9.80/SY', msi:15.20,recycled:true, tex:'tx-woven',lead:14,width:'54"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFKNT031',name:'CLOUD KNIT',    type:'knit', color:'#f4a261',content:'80% Recycled Polyester / 20% Elastane',price:'US$10.45/SY',msi:13.10,recycled:true,tex:'tx-knit', lead:12,width:'58"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFMSH025',name:'ULTRA MESH',    type:'mesh', color:'#9b5de5',content:'100% Recycled Polyester',              price:'US$7.30/SY', msi:9.50, recycled:true, tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFWVN055',name:'NERO WOVEN',    type:'woven',color:'#2b2d42',content:'100% Nylon',                          price:'US$12.60/SY',msi:16.80,recycled:false,tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
+  {id:'EFKNT044',name:'FLEX KNIT PRO', type:'knit', color:'#ef233c',content:'92% Recycled Polyester / 8% Spandex', price:'US$9.15/SY', msi:11.90,recycled:true, tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
 ];
 const COLORS_3D=['#e85d8a','#3a86ff','#06d6a0','#f4a261','#9b5de5','#ef233c','#2b2d42','#ffd60a'];
 
-/* ══════════════ i18n ══════════════ */
+/* ══════════ i18n ══════════ */
 let curLang='zh';
 const T={
   zh:{
-    badge:'數位樣冊 2.0',searchPlaceholder:'搜尋代號、材質、顏色…',
-    tabLibrary:'布料庫',tabSim:'產品模擬',tab3d:'3D 預覽',tabComp:'競品分析',
-    filterAll:'全部',filterWoven:'Woven 平織',filterKnit:'Knit 針織',filterMesh:'Mesh 網眼',filterRecycled:'♻️ 再生材料',
+    badge:'數位樣冊 2.0',searchPH:'搜尋代號、材質、顏色…',
+    tabLib:'布料庫',tabSim:'產品模擬',tab3d:'3D 預覽',tabComp:'競品分析',
+    fAll:'全部',fWoven:'Woven 平織',fKnit:'Knit 針織',fMesh:'Mesh 網眼',fRec:'♻️ 再生材料',
     showing:'顯示',items:'件',
-    selectFabric:'選擇布料',adjustMaterial:'材質調整',
-    softness:'柔軟度',texDensity:'紋理密度',gloss:'光澤感',saturation:'飽和度',
-    genBtn:'✨ AI 生成模擬圖',share:'分享',download:'下載',view3dBtn:'3D 預覽',
+    selFab:'選擇布料',adjMat:'材質調整',
+    pSoft:'柔軟度',pTex:'紋理密度',pGloss:'光澤感',pSat:'色彩飽和',
+    genBtn:'✨ AI 生成模擬圖',uploadImg:'上傳鞋款圖',share:'分享',v3dBtn:'3D 預覽',
+    uzTitle:'上傳 NB 574 鞋款圖片',uzSub:'拖放圖片到這裡，或點擊選擇\nDrop NB 574 image here or click to browse',uzBtn:'選擇圖片 / Browse',
     generating:'AI 正在生成模擬圖…',
-    angleFront:'正面',angleSide:'側面',angleTop:'俯視',angleBack:'背面',pause:'⏸ 暫停',play:'▶ 播放',
-    specInfo:'規格資訊',colorOptions:'可選色系',certs:'永續認證',composition:'材料組成',
+    angFront:'正面',angSide:'側面',angTop:'俯視',angBack:'背面',pause:'⏸ 暫停',play:'▶ 播放',
+    specInfo:'規格資訊',colOpts:'可選色系',certs:'永續認證',comp:'材料組成',
+    hint3d:'請先在「產品模擬」頁面上傳鞋款圖片',goSim:'前往上傳',
     compTitle:'數位樣冊功能對比分析',compSub:'中良現有平台 (v1.0) vs Frontier（競品）vs 中良 2.0 願景規劃',
-    colCur:'中良數位樣冊',colRef:'競品參考',colVision:'中良 2.0 願景',colTarget:'目標規劃',
+    colCur:'中良數位樣冊',colRef:'競品參考',colVis:'中良 2.0 願景',colTarget:'目標規劃',
     catBasic:'📂 基礎功能',catVis:'🎨 視覺模擬',catAI:'🤖 AI 生成',catUX:'📱 展會客戶體驗',
     f01:'布料資訊卡（代號／成份／規格）',f02:'進階搜尋與篩選',f03:'永續認證（GRS / OEKO）',f04:'價格與交期',f05:'多語言（中／英／日）',
-    f11:'靜態布料高解析照片',f12:'布料貼合產品模擬（鞋款）',f13:'3D 全視角旋轉預覽',f14:'AI 材質柔化生成',f15:'材質參數即時調整',f16:'顏色配色切換',
+    f11:'靜態布料高解析照片',f12:'布料貼合真實鞋款模擬',f13:'3D 全視角旋轉預覽',f14:'AI 材質柔化生成',f15:'材質參數即時調整',f16:'顏色配色切換',
     f21:'布料 → 成品一鍵生成',f22:'生活情境 Lookbook',f23:'針織 vs 平織識別模擬',
     f31:'平板展示優化',f32:'客戶互動選色',f33:'模擬圖分享／下載',
-    basic:'基本',realtime:'即時',
+    rt:'即時',simBtnLbl:'👟 模擬',
     rmTitle:'🗺️ 中良數位樣冊 2.0 升級路線圖',
     ph1:'基礎強化（Q3 2026）',ph1a:'布料庫 UI/UX 全面優化',ph1b:'平板展示專用模式',ph1c:'進階搜尋 + 智慧篩選',ph1d:'永續認證儀表板',ph1e:'多語言（中英日韓）',
-    ph2:'視覺模擬（Q4 2026）',ph2a:'布料 → NB574 鞋款模擬',ph2b:'3D 全視角旋轉預覽',ph2c:'顏色配色即時切換',ph2d:'材質參數全調整工具',ph2e:'客戶互動選色功能',
+    ph2:'視覺模擬（Q4 2026）',ph2a:'布料 → NB574 真實鞋款貼合',ph2b:'3D 全視角旋轉預覽',ph2c:'顏色配色即時切換',ph2d:'材質參數全調整工具',ph2e:'客戶互動選色功能',
     ph3:'AI 生成（Q1–Q2 2027）',ph3a:'Stable Diffusion 布料貼合',ph3b:'AI 材質柔化（對標 P8）',ph3c:'生活情境 Lookbook 生成',ph3d:'多品類延伸（服裝／配件）',ph3e:'即時報價系統整合',
-    simBtnLabel:'👟 模擬',
-    supplier:'供應商',width:'寬度',unitPrice:'單價',sampleLead:'交期(樣)',msiLabel:'MSI',prodLead:'交期(量產)',
   },
   en:{
-    badge:'Digital Swatch 2.0',searchPlaceholder:'Search code, material, color…',
-    tabLibrary:'Fabric Library',tabSim:'Product Sim',tab3d:'3D View',tabComp:'Analysis',
-    filterAll:'All',filterWoven:'Woven',filterKnit:'Knit',filterMesh:'Mesh',filterRecycled:'♻️ Recycled',
+    badge:'Digital Swatch 2.0',searchPH:'Search code, material, color…',
+    tabLib:'Fabric Library',tabSim:'Product Sim',tab3d:'3D View',tabComp:'Analysis',
+    fAll:'All',fWoven:'Woven',fKnit:'Knit',fMesh:'Mesh',fRec:'♻️ Recycled',
     showing:'Showing',items:'items',
-    selectFabric:'Select Fabric',adjustMaterial:'Material Adjust',
-    softness:'Softness',texDensity:'Texture Density',gloss:'Gloss',saturation:'Saturation',
-    genBtn:'✨ Generate AI Mockup',share:'Share',download:'Download',view3dBtn:'3D View',
-    generating:'AI is generating mockup…',
-    angleFront:'Front',angleSide:'Side',angleTop:'Top',angleBack:'Back',pause:'⏸ Pause',play:'▶ Play',
-    specInfo:'Specifications',colorOptions:'Color Options',certs:'Certifications',composition:'Composition',
-    compTitle:'Digital Swatch Feature Comparison',compSub:'TLC v1.0  vs  Frontier (Competitor)  vs  TLC 2.0 Vision',
-    colCur:'TLC Swatch',colRef:'Competitor',colVision:'TLC 2.0 Vision',colTarget:'Target Plan',
+    selFab:'Select Fabric',adjMat:'Material Adjust',
+    pSoft:'Softness',pTex:'Texture Density',pGloss:'Gloss',pSat:'Saturation',
+    genBtn:'✨ Generate AI Mockup',uploadImg:'Upload Shoe Image',share:'Share',v3dBtn:'3D View',
+    uzTitle:'Upload NB 574 Shoe Image',uzSub:'Drop image here or click to browse',uzBtn:'Browse Image',
+    generating:'AI generating mockup…',
+    angFront:'Front',angSide:'Side',angTop:'Top',angBack:'Back',pause:'⏸ Pause',play:'▶ Play',
+    specInfo:'Specifications',colOpts:'Color Options',certs:'Certifications',comp:'Composition',
+    hint3d:'Please upload a shoe image in the Product Sim tab first',goSim:'Go Upload',
+    compTitle:'Feature Comparison',compSub:'TLC v1.0  vs  Frontier (Competitor)  vs  TLC 2.0 Vision',
+    colCur:'TLC Swatch',colRef:'Competitor',colVis:'TLC 2.0 Vision',colTarget:'Target',
     catBasic:'📂 Core Features',catVis:'🎨 Visual Simulation',catAI:'🤖 AI Generation',catUX:'📱 Trade Show UX',
-    f01:'Fabric info card (code / content / specs)',f02:'Advanced search & filter',f03:'Sustainability certs (GRS / OEKO)',f04:'Price & lead time',f05:'Multi-language (CN / EN / JP)',
-    f11:'Hi-res static fabric photo',f12:'Fabric-on-product simulation (shoes)',f13:'3D 360° rotation preview',f14:'AI material softening',f15:'Real-time material param adjustment',f16:'Color switching',
-    f21:'Fabric → product one-click generation',f22:'Lifestyle lookbook generation',f23:'Knit vs. woven type recognition',
-    f31:'Tablet display optimization',f32:'Interactive customer color picking',f33:'Share / download mockup',
-    basic:'Basic',realtime:'Realtime',
-    rmTitle:'🗺️ TLC Digital Swatch 2.0 Upgrade Roadmap',
+    f01:'Fabric info card (code/content/specs)',f02:'Advanced search & filter',f03:'Sustainability certs (GRS/OEKO)',f04:'Price & lead time',f05:'Multi-language (CN/EN/JP)',
+    f11:'Hi-res static fabric photo',f12:'Fabric-on-real-shoe simulation',f13:'3D 360° rotation preview',f14:'AI material softening',f15:'Real-time material param adjust',f16:'Color switching',
+    f21:'Fabric → product one-click gen',f22:'Lifestyle lookbook generation',f23:'Knit vs. woven recognition',
+    f31:'Tablet display optimization',f32:'Interactive customer color pick',f33:'Share / download mockup',
+    rt:'Realtime',simBtnLbl:'👟 Simulate',
+    rmTitle:'🗺️ TLC Digital Swatch 2.0 Roadmap',
     ph1:'Foundation (Q3 2026)',ph1a:'Full library UI/UX overhaul',ph1b:'Tablet trade-show mode',ph1c:'Smart search & filtering',ph1d:'Sustainability dashboard',ph1e:'Multi-language (CN/EN/JP/KR)',
-    ph2:'Visual Simulation (Q4 2026)',ph2a:'Fabric → NB574 shoe simulation',ph2b:'3D 360° rotation preview',ph2c:'Real-time color switching',ph2d:'Full material param controls',ph2e:'Interactive customer color pick',
-    ph3:'AI Generation (Q1–Q2 2027)',ph3a:'Stable Diffusion fabric draping',ph3b:'AI material softening (parity P8)',ph3c:'AI lifestyle lookbook generation',ph3d:'Multi-category (apparel/accessories)',ph3e:'Real-time quoting integration',
-    simBtnLabel:'👟 Simulate',
-    supplier:'Supplier',width:'Width',unitPrice:'Unit Price',sampleLead:'Sample Lead',msiLabel:'MSI',prodLead:'Prod Lead',
+    ph2:'Visual Sim (Q4 2026)',ph2a:'Fabric → NB574 real-shoe draping',ph2b:'3D 360° rotation preview',ph2c:'Real-time color switching',ph2d:'Full material param controls',ph2e:'Interactive customer color pick',
+    ph3:'AI Generation (Q1–Q2 2027)',ph3a:'Stable Diffusion fabric draping',ph3b:'AI material softening (parity P8)',ph3c:'AI lifestyle lookbook gen',ph3d:'Multi-category (apparel/accessories)',ph3e:'Real-time quoting integration',
   }
 };
-
-function t(key){return T[curLang][key]||T.zh[key]||key}
-
+function t(k){return T[curLang][k]||T.zh[k]||k}
 function applyLang(){
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const k=el.getAttribute('data-i18n');
-    el.textContent=t(k);
-  });
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-    el.placeholder=t(el.getAttribute('data-i18n-placeholder'));
-  });
+  document.querySelectorAll('[data-i18n]').forEach(el=>el.textContent=t(el.getAttribute('data-i18n')));
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>el.placeholder=t(el.getAttribute('data-i18n-placeholder')));
   document.getElementById('lang-btn').textContent=curLang==='zh'?'EN':'中文';
 }
+function toggleLang(){curLang=curLang==='zh'?'en':'zh';applyLang();renderGrid(visibleFabs);renderMini();updateInfoPanels();}
 
-function toggleLang(){
-  curLang=curLang==='zh'?'en':'zh';
-  applyLang();
-  renderGrid(visibleFabs);
-  renderMini();
-  renderProd();
-  render3d();
-}
-
-/* ══════════════ STATE ══════════════ */
+/* ══════════ STATE ══════════ */
 let selId='EFJPT027';
 let visibleFabs=[...FABRICS];
 let rotating=true;
 let col3d='#e85d8a';
+let shoeImgSrc=null;  // uploaded image data URL
+const params={soft:65,tex:50,gloss:30,sat:80};
 
-/* ══════════════ COLOR UTILS ══════════════ */
-function h2r(h){return[parseInt(h.slice(1,3),16),parseInt(h.slice(3,5),16),parseInt(h.slice(5,7),16)]}
-function r2h(r,g,b){return'#'+[r,g,b].map(v=>Math.max(0,Math.min(255,Math.round(v))).toString(16).padStart(2,'0')).join('')}
-function dk(h,a){const[r,g,b]=h2r(h);return r2h(r-a,g-a,b-a)}
-function lt(h,a){const[r,g,b]=h2r(h);return r2h(r+a,g+a,b+a)}
+/* ══════════ UTILS ══════════ */
 function fab(){return FABRICS.find(f=>f.id===selId)}
+function toast(msg){const el=document.getElementById('toast');el.textContent=msg;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),2800)}
 
-function toast(msg){
-  const el=document.getElementById('toast');
-  el.textContent=msg;el.classList.add('show');
-  setTimeout(()=>el.classList.remove('show'),2800);
+/* tex CSS class → overlay class */
+function texPatClass(tex){
+  if(tex==='tx-woven')return'tex-woven-pat';
+  if(tex==='tx-knit') return'tex-knit-pat';
+  return'tex-mesh-pat';
 }
 
-/* ══════════════ NB 574 SVG ══════════════ */
-function nb574(color,w,h){
-  const uid=color.replace(/[^a-z0-9]/gi,'');
-  const D=dk(color,40), VD=dk(color,58), L=lt(color,32), VL=lt(color,52), MID=lt(color,16);
+/* ══════════ UPLOAD ══════════ */
+function triggerUpload(){document.getElementById('shoe-file').click()}
 
-  const laces=(()=>{
-    const rows=[[160,102,270,98],[163,113,268,109],[166,124,265,120],[170,135,262,131],[173,146,260,142]];
-    return rows.map(([x1,y1,x2,y2])=>`
-      <circle cx="${x1}" cy="${y1}" r="2.8" fill="${VD}" opacity=".85"/>
-      <circle cx="${x2}" cy="${y2}" r="2.8" fill="${VD}" opacity=".85"/>
-      <path d="M${x1+2.5},${y1} C${(x1+x2)/2},${y1-5} ${(x1+x2)/2},${y2-5} ${x2-2.5},${y2}" fill="none" stroke="rgba(255,255,255,.82)" stroke-width="1.8"/>
-    `).join('');
-  })();
-
-  return `<svg width="${w}" height="${h}" viewBox="0 0 520 270" xmlns="http://www.w3.org/2000/svg">
-  <defs>
-    <linearGradient id="ug${uid}" x1="0%" y1="0%" x2="85%" y2="100%">
-      <stop offset="0%" stop-color="${L}"/>
-      <stop offset="100%" stop-color="${D}"/>
-    </linearGradient>
-    <linearGradient id="msg${uid}" x1="0%" y1="0%" x2="0%" y2="100%">
-      <stop offset="0%" stop-color="#f2f2f2"/>
-      <stop offset="100%" stop-color="#c0c0c0"/>
-    </linearGradient>
-    <linearGradient id="hcg${uid}" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="${MID}"/>
-      <stop offset="100%" stop-color="${D}"/>
-    </linearGradient>
-    <pattern id="wp${uid}" width="5" height="5" patternUnits="userSpaceOnUse">
-      <line x1="0" y1="0" x2="5" y2="5" stroke="rgba(255,255,255,.1)" stroke-width=".9"/>
-      <line x1="5" y1="0" x2="0" y2="5" stroke="rgba(0,0,0,.07)" stroke-width=".9"/>
-    </pattern>
-    <clipPath id="cp${uid}">
-      <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q153,80 196,72 L255,66 Q305,62 348,68 L392,80 Q430,93 450,118 L463,145 Q470,170 467,196 L465,202 Z"/>
-    </clipPath>
-  </defs>
-
-  <!-- ground shadow -->
-  <ellipse cx="258" cy="258" rx="218" ry="10" fill="rgba(0,0,0,.16)"/>
-
-  <!-- OUTSOLE -->
-  <path d="M48,224 Q40,230 43,238 L47,244 Q258,252 480,243 L488,237 Q490,229 484,222 Z" fill="#181818"/>
-  <!-- outsole tread notches -->
-  ${[105,140,175,215,255,295,335,375,420].map(x=>`<line x1="${x}" y1="244" x2="${x}" y2="238" stroke="#3a3a3a" stroke-width="3.2" stroke-linecap="round"/>`).join('')}
-
-  <!-- MIDSOLE — chunky 574 foam -->
-  <path d="M50,200 Q44,210 48,224 Q258,232 484,222 Q488,214 485,205 Q430,210 355,210 Q260,214 165,208 Q100,206 50,200 Z" fill="url(#msg${uid})"/>
-  <!-- midsole highlight seam -->
-  <path d="M55,213 Q260,218 483,212" fill="none" stroke="rgba(255,255,255,.55)" stroke-width=".9" stroke-dasharray="3,2"/>
-  <!-- midsole lower seam -->
-  <path d="M49,220 Q260,226 485,218" fill="none" stroke="#aaa" stroke-width=".7" stroke-dasharray="3,2"/>
-
-  <!-- UPPER MAIN BODY -->
-  <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q153,80 196,72 L255,66 Q305,62 348,68 L392,80 Q430,93 450,118 L463,145 Q470,170 467,196 L465,202 Z" fill="url(#ug${uid})"/>
-  <!-- fabric texture overlay -->
-  <rect x="0" y="0" width="520" height="270" fill="url(#wp${uid})" clip-path="url(#cp${uid})" opacity=".65"/>
-
-  <!-- TOE CAP — darker suede front section -->
-  <path d="M52,202 Q46,184 53,160 Q62,136 82,120 L118,97 Q150,115 162,150 Q108,172 72,196 Q61,200 52,202 Z" fill="${D}" opacity=".87"/>
-  <!-- toe cap seam stitching -->
-  <path d="M118,97 Q150,115 162,150" fill="none" stroke="rgba(255,255,255,.38)" stroke-width="1.6" stroke-dasharray="3,2"/>
-
-  <!-- SIDE PANEL — lighter panel in center (N logo area) -->
-  <path d="M164,150 Q206,112 264,99 L352,95 Q400,99 432,124 L465,150 Q402,168 322,174 Q238,178 178,167 Z" fill="${L}" opacity=".60"/>
-
-  <!-- LARGE N LOGO — NB 574 iconic mark -->
-  <text x="252" y="164" font-size="84" font-weight="900" fill="white" opacity=".88"
-        font-family="'Arial Black',Impact,'Helvetica Neue',sans-serif"
-        transform="skewX(-10)">N</text>
-  <!-- N stitching outline -->
-  <text x="252" y="164" font-size="84" font-weight="900" fill="none" stroke="${VL}" stroke-width="1.2" opacity=".4"
-        font-family="'Arial Black',Impact,'Helvetica Neue',sans-serif"
-        transform="skewX(-10)">N</text>
-
-  <!-- TONGUE -->
-  <path d="M155,100 Q176,76 210,68 L248,65 Q270,64 278,73 L280,87 Q268,102 252,110 Q224,120 196,118 L168,112 Z" fill="${VL}" opacity=".90"/>
-  <!-- NB tab on tongue -->
-  <rect x="216" y="86" width="30" height="12" rx="3" fill="${D}" opacity=".75"/>
-  <text x="231" y="96" text-anchor="middle" font-size="7.5" fill="white" font-weight="700">NB</text>
-
-  <!-- LACES -->
-  ${laces}
-
-  <!-- COLLAR PADDING — softer lighter back area -->
-  <path d="M390,83 Q426,95 449,120 L462,148 Q466,166 465,182 L462,196 Q456,172 446,152 Q426,122 394,106 L380,92 Z" fill="${VL}" opacity=".50"/>
-
-  <!-- HEEL COUNTER — back structural panel -->
-  <path d="M432,122 Q455,142 463,170 L465,202 L453,202 Q452,180 448,162 Q440,140 424,126 Z" fill="url(#hcg${uid})" opacity=".88"/>
-  <!-- heel tab -->
-  <rect x="455" y="132" width="11" height="38" rx="4" fill="${VL}" opacity=".92"/>
-  <text x="460" y="154" font-size="7" fill="${D}" font-weight="700" text-anchor="middle" writing-mode="vertical-rl">NB</text>
-
-  <!-- COLLAR EDGE top stitching -->
-  <path d="M255,66 Q306,60 350,66 L394,78 Q432,91 452,116" fill="none" stroke="rgba(255,255,255,.22)" stroke-width="1.1" stroke-dasharray="3,2"/>
-  <!-- collar opening shape (inner foam) -->
-  <path d="M390,83 Q408,79 430,86 L450,100 Q426,95 398,92 Z" fill="white" opacity=".18"/>
-  </svg>`;
+function handleUpload(file){
+  if(!file||!file.type.startsWith('image/'))return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    shoeImgSrc=e.target.result;
+    // persist across tab changes in this session
+    try{sessionStorage.setItem('shoe_img',shoeImgSrc)}catch(_){}
+    activateShoeViewer();
+    toast(curLang==='zh'?'✅ 圖片上傳成功！切換布料即可預覽':'✅ Image uploaded! Switch fabrics to preview.');
+  };
+  reader.readAsDataURL(file);
 }
 
-/* ══════════════ TAB ══════════════ */
+function activateShoeViewer(){
+  if(!shoeImgSrc)return;
+  // simulator
+  document.getElementById('shoe-img-sim').src=shoeImgSrc;
+  document.getElementById('upload-zone').style.display='none';
+  document.getElementById('shoe-display').style.display='block';
+  // 3d view
+  document.getElementById('shoe-img-3d').src=shoeImgSrc;
+  document.getElementById('hint-3d').style.display='none';
+  document.getElementById('shoe-display-3d').style.display='block';
+  document.getElementById('shoe-shadow-3d').style.display='block';
+  applyOverlays();
+}
+
+/* ══════════ OVERLAYS ══════════
+   mix-blend-mode: color  → takes hue+saturation from overlay, luminosity from photo
+   Result: white midsole stays white, suede upper gets tinted with fabric color.
+   mix-blend-mode: soft-light → adds subtle fabric surface texture
+   mix-blend-mode: screen     → adds gloss highlight
+*/
+function applyOverlays(){
+  const f=fab();if(!f||!shoeImgSrc)return;
+  const colorOp  = 0.38 + (params.sat  /100)*0.48;  // 0.38–0.86
+  const texOp    = (params.tex  /100)*0.28;           // 0–0.28
+  const glossOp  = (params.gloss/100)*0.40;           // 0–0.40
+  const texClass = texPatClass(f.tex);
+  ['sim','3d'].forEach(sfx=>{
+    const c=document.getElementById(`ov-color-${sfx}`);
+    const tx=document.getElementById(`ov-tex-${sfx}`);
+    const g=document.getElementById(`ov-gloss-${sfx}`);
+    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
+    if(g){g.style.opacity=glossOp;}
+  });
+}
+
+function setParam(key,val){
+  params[key]=val;
+  document.getElementById('v-'+key).textContent=val+'%';
+  applyOverlays();
+}
+
+/* ══════════ TAB ══════════ */
 function goTab(tab,btn){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
   document.getElementById('tab-'+tab).classList.add('active');
   btn.classList.add('active');
-  if(tab==='simulator'){renderMini();renderProd();}
-  if(tab==='view3d'){render3d();}
+  if(tab==='simulator'){renderMini();updateSimToolbar();}
+  if(tab==='view3d'){updateInfoPanels();}
 }
 
-/* ══════════════ LIBRARY ══════════════ */
+/* ══════════ LIBRARY ══════════ */
 function renderGrid(list){
   document.getElementById('cnt').textContent=list.length;
   document.getElementById('fab-grid').innerHTML=list.map(f=>`
@@ -636,40 +690,33 @@ function renderGrid(list){
         <div class="card-name">${f.name}</div>
         <div class="card-code">${f.id}</div>
         <div class="card-specs">
-          <span class="sk">${t('supplier')&&curLang==='en'?'Content':'成份'}</span><span class="sv" style="font-size:10px">${f.content.length>22?f.content.slice(0,22)+'…':f.content}</span>
+          <span class="sk">${curLang==='en'?'Content':'成份'}</span><span class="sv" style="font-size:10px">${f.content.length>22?f.content.slice(0,22)+'…':f.content}</span>
           <span class="sk">${curLang==='en'?'Width':'寬度'}</span><span class="sv">${f.width}</span>
           <span class="sk">${curLang==='en'?'S.Lead':'交期(樣)'}</span><span class="sv">${f.lead}${curLang==='en'?' d':' 天'}</span>
           <span class="sk">${curLang==='en'?'Origin':'供應商'}</span><span class="sv" style="font-size:10px">TLC</span>
         </div>
         <div class="card-foot">
           <span class="price">${f.price}</span>
-          <button class="sim-btn" onclick="event.stopPropagation();quickSim('${f.id}')">${t('simBtnLabel')}</button>
+          <button class="sim-btn" onclick="event.stopPropagation();quickSim('${f.id}')">${t('simBtnLbl')}</button>
         </div>
       </div>
     </div>`).join('');
 }
 
-function selFab(id){selId=id;renderGrid(visibleFabs);renderMini();renderProd();render3d();}
-
-function quickSim(id){
-  selId=id;
-  goTab('simulator',document.querySelectorAll('.tab-btn')[1]);
-}
-
+function selFab(id){selId=id;col3d=fab().color;renderGrid(visibleFabs);renderMini();updateSimToolbar();updateInfoPanels();applyOverlays();}
+function quickSim(id){selId=id;col3d=fab().color;goTab('simulator',document.querySelectorAll('.tab-btn')[1]);}
 function filterBy(type,chip){
-  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));
-  chip.classList.add('active');
+  document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');
   visibleFabs=type==='all'?[...FABRICS]:type==='recycled'?FABRICS.filter(f=>f.recycled):FABRICS.filter(f=>f.type===type);
   renderGrid(visibleFabs);
 }
-
 function searchFabrics(q){
   const ql=q.toLowerCase();
   visibleFabs=FABRICS.filter(f=>f.name.toLowerCase().includes(ql)||f.id.toLowerCase().includes(ql)||f.content.toLowerCase().includes(ql));
   renderGrid(visibleFabs);
 }
 
-/* ══════════════ SIMULATOR ══════════════ */
+/* ══════════ SIMULATOR ══════════ */
 function renderMini(){
   document.getElementById('mini-grid').innerHTML=FABRICS.map(f=>`
     <div class="mini-sw ${f.tex} ${f.id===selId?'active':''}" style="--sc:${f.color}" onclick="selFab('${f.id}')">
@@ -677,7 +724,7 @@ function renderMini(){
     </div>`).join('');
 }
 
-function renderProd(){
+function updateSimToolbar(){
   const f=fab();if(!f)return;
   const sp=document.getElementById('sp');
   sp.style.setProperty('--sc',f.color);sp.className=`sim-preview ${f.tex}`;
@@ -685,47 +732,48 @@ function renderProd(){
   document.getElementById('sc').textContent=f.id+' · '+f.content;
   document.getElementById('ft-mat').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>🧵 ${f.content.split('/')[0].trim()}`;
   document.getElementById('ft-code').innerHTML=`<span style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0"></span>📋 ${f.id}`;
-  document.getElementById('prod-wrap').innerHTML=nb574(f.color,500,265);
 }
-
-function setParam(key,val){document.getElementById('v-'+key).textContent=val+'%';}
 
 function doGenerate(){
+  if(!shoeImgSrc){toast(curLang==='zh'?'請先上傳鞋款圖片':'Please upload a shoe image first');return;}
   const ov=document.getElementById('gen-ov');
-  ov.classList.add('show');
-  toast(curLang==='zh'?'🤖 AI 正在生成模擬圖，請稍候…':'🤖 AI generating mockup, please wait…');
-  setTimeout(()=>{ov.classList.remove('show');renderProd();toast(curLang==='zh'?'✅ 模擬圖生成完成！':'✅ Mockup generated!');},2000);
+  ov.style.pointerEvents='all';ov.classList.add('show');
+  toast(curLang==='zh'?'🤖 AI 正在生成模擬圖…':'🤖 AI generating mockup…');
+  setTimeout(()=>{ov.classList.remove('show');ov.style.pointerEvents='none';applyOverlays();toast(curLang==='zh'?'✅ 模擬圖生成完成！':'✅ Mockup generated!');},2000);
 }
 function doShare(){toast(`📤 ${fab().name} ${curLang==='zh'?'分享連結已複製':'share link copied'}`);}
-function doDownload(){toast(`💾 ${fab().id}_NB574_mockup.png ${curLang==='zh'?'下載中…':'downloading…'}`);}
 
-/* ══════════════ 3D VIEW ══════════════ */
-function render3d(){
+/* ══════════ INFO PANELS (3D sidebar) ══════════ */
+function updateInfoPanels(){
   const f=fab();if(!f)return;
-  col3d=f.color;
-  document.getElementById('shoe3d-inner').innerHTML=nb574(f.color,440,230);
-  const sg=document.getElementById('spec3d');
   const sl=curLang==='en';
-  sg.innerHTML=`
+  document.getElementById('spec3d').innerHTML=`
     <div><div class="k">${sl?'Supplier':'供應商'}</div><div class="v" style="font-size:11px">${f.supplier}</div></div>
     <div><div class="k">${sl?'Width':'寬度'}</div><div class="v">${f.width}</div></div>
     <div><div class="k">${sl?'Price':'單價'}</div><div class="v" style="color:var(--blue)">${f.price}</div></div>
     <div><div class="k">${sl?'S.Lead':'交期(樣)'}</div><div class="v">${f.lead}${sl?' d':' 天'}</div></div>
-    <div><div class="k">${sl?'MSI':'MSI'}</div><div class="v">${f.msi}</div></div>
+    <div><div class="k">MSI</div><div class="v">${f.msi}</div></div>
     <div><div class="k">${sl?'P.Lead':'量產交期'}</div><div class="v">28${sl?' d':' 天'}</div></div>`;
   document.getElementById('mat3d').textContent=f.content;
   document.getElementById('mat3d-sub').textContent=f.name+' · '+f.id;
   renderColBtns();
 }
 
+/* ══════════ 3D VIEW ══════════ */
 function renderColBtns(){
   document.getElementById('col-row').innerHTML=COLORS_3D.map(c=>`
-    <div class="col-btn ${c===col3d?'active':''}" style="background:${c}" onclick="applyCol('${c}')"></div>`).join('');
+    <div class="col-btn ${c===col3d?'active':''}" style="background:${c}" onclick="applyCol3d('${c}')"></div>`).join('');
 }
 
-function applyCol(c){
+function applyCol3d(c){
   col3d=c;
-  document.getElementById('shoe3d-inner').innerHTML=nb574(c,440,230);
+  // Find closest fabric and select it, or just directly set overlay
+  const match=FABRICS.find(f=>f.color===c);
+  if(match)selFab(match.id);
+  else{
+    const ov3d=document.getElementById('ov-color-3d');
+    if(ov3d){ov3d.style.background=c;ov3d.style.opacity=0.38+(params.sat/100)*0.48;}
+  }
   renderColBtns();
 }
 
@@ -741,16 +789,23 @@ function setAngle(a,btn){
   document.querySelectorAll('.ang-btn').forEach(b=>b.classList.remove('active'));
   btn.classList.add('active');
   const s=document.getElementById('shoe3d');
-  const map={front:'rotateY(0deg) rotateX(6deg)',side:'rotateY(90deg) rotateX(6deg)',top:'rotateY(30deg) rotateX(60deg)',back:'rotateY(180deg) rotateX(6deg)'};
+  const map={front:'rotateY(0deg) rotateX(5deg)',side:'rotateY(90deg) rotateX(5deg)',top:'rotateY(30deg) rotateX(60deg)',back:'rotateY(180deg) rotateX(5deg)'};
   s.style.animation='none';s.style.transform=map[a];
   rotating=false;
   document.getElementById('rot-btn').textContent=t('play');
   document.getElementById('rot-btn').setAttribute('data-i18n','play');
 }
 
-/* ══════════════ INIT ══════════════ */
+/* ══════════ INIT ══════════ */
+// Restore session image if available
+try{const saved=sessionStorage.getItem('shoe_img');if(saved){shoeImgSrc=saved;}}catch(_){}
+
 document.getElementById('shoe3d').addEventListener('click',()=>toggleRot(document.getElementById('rot-btn')));
 renderGrid(FABRICS);
+renderMini();
+updateSimToolbar();
+updateInfoPanels();
+if(shoeImgSrc)activateShoeViewer();
 </script>
 </body>
 </html>
