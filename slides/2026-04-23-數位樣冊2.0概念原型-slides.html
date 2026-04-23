@@ -186,7 +186,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 
 /* ── 3D VIEW ── */
 .v3d-layout{display:grid;grid-template-columns:1fr 300px;gap:22px}
-.stage3d{background:linear-gradient(135deg,#0d1b2a,#1b2f50,#0f3460);border-radius:16px;display:flex;align-items:center;justify-content:center;min-height:500px;position:relative;overflow:hidden}
+.stage3d{background:#ede8df;border-radius:16px;min-height:500px;position:relative;overflow:hidden}
 .grid-bg{position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.03) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.03) 1px,transparent 1px);background-size:40px 40px}
 .glow{position:absolute;width:420px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(43,181,200,.13) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none}
 .scene{perspective:650px;position:relative;z-index:1}
@@ -263,7 +263,24 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .ph-list li::before{content:'→';position:absolute;left:0;color:var(--muted)}
 .toast{position:fixed;bottom:22px;right:22px;background:#1a1a2e;color:#fff;padding:11px 18px;border-radius:9px;font-size:13px;font-weight:500;z-index:999;opacity:0;transform:translateY(8px);transition:all .28s;pointer-events:none}
 .toast.show{opacity:1;transform:translateY(0)}
+
+/* ── THREE.JS 3D VIEWER ── */
+#three-canvas{position:absolute;inset:0;width:100%!important;height:100%!important;display:block;touch-action:none}
+.v3d-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#555;z-index:5;pointer-events:none}
+.v3d-spinner{width:36px;height:36px;border:3px solid rgba(0,0,0,.12);border-top-color:#1a5fa8;border-radius:50%;animation:v3d-spin .8s linear infinite}
+@keyframes v3d-spin{to{transform:rotate(360deg)}}
+.v3d-ctrl-panel{position:absolute;top:14px;left:14px;background:rgba(10,10,10,.70);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border-radius:10px;padding:14px 16px;width:174px;z-index:10}
+.v3d-ctrl-title{color:rgba(255,255,255,.5);font-size:9.5px;font-weight:700;letter-spacing:1.4px;text-transform:uppercase;margin-bottom:10px}
+.v3d-ctrl-row{display:flex;align-items:center;gap:6px;margin-bottom:8px}
+.v3d-ctrl-row:last-child{margin-bottom:0}
+.v3d-ctrl-row label{color:rgba(255,255,255,.75);font-size:11px;width:70px;flex-shrink:0}
+.v3d-ctrl-row input[type=range]{flex:1;-webkit-appearance:none;height:3px;background:rgba(255,255,255,.22);border-radius:2px;outline:none;cursor:pointer}
+.v3d-ctrl-row input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:13px;height:13px;border-radius:50%;background:#2bb5c8;cursor:pointer}
+.v3d-ctrl-row span{color:#2bb5c8;font-size:10px;width:30px;text-align:right;flex-shrink:0}
+.v3d-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:rgba(0,0,0,.3);font-size:11px;pointer-events:none;white-space:nowrap}
+.v3d-fab-badge{position:absolute;top:14px;right:14px;background:rgba(26,95,168,.88);backdrop-filter:blur(8px);color:#fff;font-size:12px;font-weight:600;padding:5px 13px;border-radius:20px;z-index:10;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
 
@@ -401,39 +418,32 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 <!-- ═══ TAB 3: 3D 預覽 ═══ -->
 <div id="tab-view3d" class="panel">
   <div class="v3d-layout">
-    <div class="stage3d">
-      <div class="grid-bg"></div>
-      <div class="glow"></div>
-      <div class="scene">
-        <div class="shoe3d" id="shoe3d" title="Click to pause">
-
-          <!-- Hint when no image uploaded -->
-          <div id="hint-3d" class="upload-hint-3d">
-            <div class="hint-icon">📸</div>
-            <div data-i18n="hint3d">請先在「產品模擬」頁面上傳鞋款圖片</div>
-            <div style="margin-top:8px"><span class="hint-link" onclick="goTab('simulator',document.querySelectorAll('.tab-btn')[1])">→ <span data-i18n="goSim">前往上傳</span></span></div>
-          </div>
-
-          <!-- 3D shoe viewer (shown after upload) -->
-          <div id="shoe-display-3d" style="display:none">
-            <div class="shoe3d-viewer" id="shoe3d-viewer">
-              <img id="shoe-img-3d" src="" alt="NB 574 3D">
-              <div class="ov-color" id="ov-color-3d"></div>
-              <div class="ov-tex"  id="ov-tex-3d"></div>
-              <div class="ov-gloss" id="ov-gloss-3d"></div>
-            </div>
-          </div>
-
+    <div class="stage3d" id="stage3d">
+      <canvas id="three-canvas"></canvas>
+      <div class="v3d-loading" id="v3d-loading">
+        <div class="v3d-spinner"></div>
+        <div style="margin-top:12px;font-size:13px" data-i18n="loading3d">載入 3D 模型中...</div>
+      </div>
+      <div class="v3d-ctrl-panel">
+        <div class="v3d-ctrl-title" data-i18n="matProps">材質屬性</div>
+        <div class="v3d-ctrl-row">
+          <label>Roughness</label>
+          <input type="range" id="v3d-roughness" min="0" max="1" step="0.05" value="0.75" oninput="window.update3dMat('roughness',+this.value)">
+          <span id="v3d-roughness-v">0.75</span>
         </div>
-        <div class="shoe-shadow" id="shoe-shadow-3d" style="display:none"></div>
+        <div class="v3d-ctrl-row">
+          <label>Metalness</label>
+          <input type="range" id="v3d-metalness" min="0" max="1" step="0.05" value="0.05" oninput="window.update3dMat('metalness',+this.value)">
+          <span id="v3d-metalness-v">0.05</span>
+        </div>
+        <div class="v3d-ctrl-row">
+          <label>Tex Scale</label>
+          <input type="range" id="v3d-texscale" min="0.5" max="4" step="0.25" value="1" oninput="window.update3dMat('scale',+this.value)">
+          <span id="v3d-texscale-v">1×</span>
+        </div>
       </div>
-      <div class="angle-bar">
-        <button class="ang-btn active" onclick="setAngle('front',this)" data-i18n="angFront">正面</button>
-        <button class="ang-btn" onclick="setAngle('side',this)" data-i18n="angSide">側面</button>
-        <button class="ang-btn" onclick="setAngle('top',this)" data-i18n="angTop">俯視</button>
-        <button class="ang-btn" onclick="setAngle('back',this)" data-i18n="angBack">背面</button>
-        <button class="ang-btn" id="rot-btn" onclick="toggleRot(this)" data-i18n="pause">⏸ 暫停</button>
-      </div>
+      <div class="v3d-hint" data-i18n="drag3d">🖱 拖曳旋轉 · 滾輪縮放</div>
+      <div class="v3d-fab-badge" id="v3d-fab-badge"></div>
     </div>
 
     <div class="info-cards">
@@ -590,6 +600,7 @@ const T={
     angFront:'正面',angSide:'側面',angTop:'俯視',angBack:'背面',pause:'⏸ 暫停',play:'▶ 播放',
     specInfo:'規格資訊',colOpts:'可選色系',certs:'永續認證',comp:'材料組成',
     hint3d:'請先在「產品模擬」頁面上傳鞋款圖片',goSim:'前往上傳',
+    loading3d:'載入 3D 模型中...',matProps:'材質屬性',drag3d:'🖱 拖曳旋轉 · 滾輪縮放',
     compTitle:'數位樣冊功能對比分析',compSub:'中良現有平台 (v1.0) vs Frontier（競品）vs 中良 2.0 願景規劃',
     colCur:'中良數位樣冊',colRef:'競品參考',colVis:'中良 2.0 願景',colTarget:'目標規劃',
     catBasic:'📂 基礎功能',catVis:'🎨 視覺模擬',catAI:'🤖 AI 生成',catUX:'📱 展會客戶體驗',
@@ -616,6 +627,7 @@ const T={
     angFront:'Front',angSide:'Side',angTop:'Top',angBack:'Back',pause:'⏸ Pause',play:'▶ Play',
     specInfo:'Specifications',colOpts:'Color Options',certs:'Certifications',comp:'Composition',
     hint3d:'Please upload a shoe image in the Product Sim tab first',goSim:'Go Upload',
+    loading3d:'Loading 3D model...',matProps:'Material',drag3d:'🖱 Drag to rotate · Scroll to zoom',
     compTitle:'Feature Comparison',compSub:'TLC v1.0  vs  Frontier (Competitor)  vs  TLC 2.0 Vision',
     colCur:'TLC Swatch',colRef:'Competitor',colVis:'TLC 2.0 Vision',colTarget:'Target',
     catBasic:'📂 Core Features',catVis:'🎨 Visual Simulation',catAI:'🤖 AI Generation',catUX:'📱 Trade Show UX',
@@ -722,7 +734,7 @@ function goTab(tab,btn){
   document.getElementById('tab-'+tab).classList.add('active');
   btn.classList.add('active');
   if(tab==='simulator'){renderMini();updateSimToolbar();}
-  if(tab==='view3d'){updateInfoPanels();}
+  if(tab==='view3d'){updateInfoPanels();document.dispatchEvent(new Event('tlcTab3dOpen'));}
 }
 
 /* ══════════ LIBRARY ══════════ */
@@ -751,7 +763,7 @@ function renderGrid(list){
     </div>`).join('');
 }
 
-function selFab(id){selId=id;col3d=fab().color;renderGrid(visibleFabs);renderMini();updateSimToolbar();updateInfoPanels();applyOverlays();}
+function selFab(id){selId=id;col3d=fab().color;renderGrid(visibleFabs);renderMini();updateSimToolbar();updateInfoPanels();applyOverlays();document.dispatchEvent(new CustomEvent('tlcFabricChanged',{detail:{id}}));}
 function quickSim(id){selId=id;col3d=fab().color;goTab('simulator',document.querySelectorAll('.tab-btn')[1]);}
 function filterBy(type,chip){
   document.querySelectorAll('.chip').forEach(c=>c.classList.remove('active'));chip.classList.add('active');
@@ -854,6 +866,193 @@ renderMini();
 updateSimToolbar();
 updateInfoPanels();
 if(shoeImgSrc)activateShoeViewer();
+</script>
+<script type="module">
+import * as THREE from 'three';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+
+const SHOE_URL  = 'https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/MaterialsVariantsShoe/glTF-Binary/MaterialsVariantsShoe.glb';
+const SHOE_URL2 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/MaterialsVariantsShoe/glTF-Binary/MaterialsVariantsShoe.glb';
+
+let renderer, scene, camera, controls;
+let upperMats = [];
+let v3d = {roughness:0.75, metalness:0.05, scale:1};
+let initialized = false;
+
+function genTex(color, type, scale) {
+  const S = 512;
+  const cv = document.createElement('canvas');
+  cv.width = cv.height = S;
+  const ctx = cv.getContext('2d');
+  const hex = color.replace('#','');
+  const r = parseInt(hex.slice(0,2),16);
+  const g = parseInt(hex.slice(2,4),16);
+  const b = parseInt(hex.slice(4,6),16);
+  ctx.fillStyle = color;
+  ctx.fillRect(0,0,S,S);
+  const ps = Math.round(S / (28 / scale));
+  if(type==='woven') {
+    for(let i=0;i<S;i+=ps){
+      ctx.fillStyle=`rgba(${Math.max(r-40,0)},${Math.max(g-40,0)},${Math.max(b-40,0)},.6)`;
+      ctx.fillRect(i,0,Math.max(2,ps*.2),S);
+      ctx.fillRect(0,i,S,Math.max(2,ps*.2));
+    }
+    for(let i=ps*.5;i<S;i+=ps){
+      ctx.fillStyle='rgba(255,255,255,.14)';
+      ctx.fillRect(i,0,Math.max(1,ps*.1),S);
+      ctx.fillRect(0,i,S,Math.max(1,ps*.1));
+    }
+  } else if(type==='knit') {
+    const ks=ps*1.6;
+    for(let row=0;row*ks<S+ks;row++){
+      for(let col=-1;col*ks<S+ks;col++){
+        const ox=col*ks+(row%2)*ks*.5, oy=row*ks;
+        ctx.beginPath();
+        ctx.ellipse(ox+ks*.5,oy+ks*.35,ks*.42,ks*.27,0,Math.PI,2*Math.PI);
+        ctx.strokeStyle=`rgba(${Math.max(r-30,0)},${Math.max(g-30,0)},${Math.max(b-30,0)},.55)`;
+        ctx.lineWidth=1.8; ctx.stroke();
+        ctx.beginPath();
+        ctx.ellipse(ox+ks*.5,oy+ks*.35,ks*.42,ks*.27,0,0,Math.PI);
+        ctx.strokeStyle='rgba(255,255,255,.11)'; ctx.stroke();
+      }
+    }
+  } else {
+    const ms=Math.max(4,ps*.8), gw=ms*.65;
+    for(let i=0;i<S;i+=ms) for(let j=0;j<S;j+=ms){
+      ctx.strokeStyle=`rgba(${Math.max(r-45,0)},${Math.max(g-45,0)},${Math.max(b-45,0)},.72)`;
+      ctx.lineWidth=1.5; ctx.strokeRect(i+ms*.17,j+ms*.17,gw,gw);
+    }
+  }
+  return cv;
+}
+
+function apply3dFabric() {
+  const fabrics=window.FABRICS, selId=window.selId;
+  if(!fabrics||!selId||upperMats.length===0) return;
+  const f=fabrics.find(x=>x.id===selId);
+  if(!f) return;
+  const type=f.tex.includes('woven')?'woven':f.tex.includes('knit')?'knit':'mesh';
+  const cv=genTex(f.color,type,v3d.scale);
+  const tex=new THREE.CanvasTexture(cv);
+  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+  tex.repeat.set(4,4);
+  tex.colorSpace=THREE.SRGBColorSpace;
+  upperMats.forEach(m=>{
+    if(m.map) m.map.dispose();
+    m.map=tex; m.color.set(0xffffff);
+    m.roughness=v3d.roughness; m.metalness=v3d.metalness;
+    m.needsUpdate=true;
+  });
+  const badge=document.getElementById('v3d-fab-badge');
+  if(badge) badge.textContent=f.name;
+}
+
+window.update3dMat=function(prop,val){
+  if(prop==='roughness'){v3d.roughness=val;document.getElementById('v3d-roughness-v').textContent=val.toFixed(2);}
+  else if(prop==='metalness'){v3d.metalness=val;document.getElementById('v3d-metalness-v').textContent=val.toFixed(2);}
+  else if(prop==='scale'){v3d.scale=val;document.getElementById('v3d-texscale-v').textContent=val.toFixed(1)+'×';apply3dFabric();return;}
+  upperMats.forEach(m=>{m.roughness=v3d.roughness;m.metalness=v3d.metalness;m.needsUpdate=true;});
+};
+
+function initThreeJS(){
+  if(initialized) return;
+  initialized=true;
+  const canvas=document.getElementById('three-canvas');
+  const container=document.getElementById('stage3d');
+  const W=container.offsetWidth, H=container.offsetHeight;
+
+  renderer=new THREE.WebGLRenderer({canvas,antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(W,H);
+  renderer.shadowMap.enabled=true;
+  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+  renderer.outputColorSpace=THREE.SRGBColorSpace;
+  renderer.toneMapping=THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure=1.3;
+
+  scene=new THREE.Scene();
+  scene.background=new THREE.Color(0xede8df);
+
+  camera=new THREE.PerspectiveCamera(40,W/H,0.01,50);
+  camera.position.set(0,0.6,3.8);
+
+  scene.add(new THREE.AmbientLight(0xfff5e8,0.9));
+  const sun=new THREE.DirectionalLight(0xffffff,2.0);
+  sun.position.set(3,8,4); sun.castShadow=true;
+  sun.shadow.mapSize.set(2048,2048);
+  sun.shadow.camera.left=sun.shadow.camera.bottom=-3;
+  sun.shadow.camera.right=sun.shadow.camera.top=3;
+  sun.shadow.camera.far=30; sun.shadow.bias=-0.001;
+  scene.add(sun);
+  const fill=new THREE.DirectionalLight(0xdeeeff,0.5);
+  fill.position.set(-3,2,-2); scene.add(fill);
+
+  const ground=new THREE.Mesh(
+    new THREE.CircleGeometry(5,64),
+    new THREE.MeshStandardMaterial({color:0xe8e0d0,roughness:1,metalness:0})
+  );
+  ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
+
+  const spot=new THREE.SpotLight(0xfffae8,3,8,Math.PI/5,0.6,1.5);
+  spot.position.set(0,5,0); spot.target.position.set(0,0,0);
+  scene.add(spot,spot.target);
+
+  controls=new OrbitControls(camera,renderer.domElement);
+  controls.enableDamping=true; controls.dampingFactor=0.06;
+  controls.minDistance=1.5; controls.maxDistance=8;
+  controls.target.set(0,0.3,0);
+  controls.autoRotate=true; controls.autoRotateSpeed=1.5;
+  controls.maxPolarAngle=Math.PI*.78;
+  renderer.domElement.addEventListener('pointerdown',()=>controls.autoRotate=false);
+
+  const loader=new GLTFLoader();
+  function tryLoad(url,fb){
+    loader.load(url,gltf=>{
+      const model=gltf.scene;
+      const box=new THREE.Box3().setFromObject(model);
+      const size=box.getSize(new THREE.Vector3());
+      const sc=2.2/Math.max(size.x,size.y,size.z);
+      const center=box.getCenter(new THREE.Vector3());
+      model.scale.setScalar(sc);
+      model.position.set(-center.x*sc,-box.min.y*sc,-center.z*sc);
+      model.traverse(child=>{
+        if(!child.isMesh) return;
+        child.castShadow=true; child.receiveShadow=true;
+        const mats=Array.isArray(child.material)?child.material:[child.material];
+        mats.forEach(m=>{
+          const n=(m.name||'').toLowerCase();
+          if(!n.includes('sole')&&!n.includes('lace')&&!n.includes('rubber')&&!n.includes('logo'))
+            upperMats.push(m);
+        });
+      });
+      scene.add(model);
+      apply3dFabric();
+      const el=document.getElementById('v3d-loading');
+      if(el) el.style.display='none';
+    },undefined,err=>{
+      if(fb) tryLoad(fb,null);
+      else {
+        const el=document.getElementById('v3d-loading');
+        if(el) el.innerHTML='<div style="color:#ef4444;text-align:center;font-size:13px;padding:20px">3D 模型載入失敗<br><small>請確認網路連線</small></div>';
+      }
+    });
+  }
+  tryLoad(SHOE_URL,SHOE_URL2);
+
+  new ResizeObserver(()=>{
+    const W2=container.offsetWidth,H2=container.offsetHeight;
+    camera.aspect=W2/H2; camera.updateProjectionMatrix(); renderer.setSize(W2,H2);
+  }).observe(container);
+
+  (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
+}
+
+document.addEventListener('tlcTab3dOpen',()=>{setTimeout(initThreeJS,50);apply3dFabric();});
+document.addEventListener('tlcFabricChanged',apply3dFabric);
+document.addEventListener('DOMContentLoaded',()=>{
+  if(document.getElementById('tab-view3d')?.classList.contains('active')) setTimeout(initThreeJS,100);
+});
 </script>
 </body>
 </html>
