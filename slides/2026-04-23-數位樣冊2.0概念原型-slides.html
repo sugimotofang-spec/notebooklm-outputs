@@ -671,8 +671,21 @@ function applyOverlays(){
     const c=document.getElementById(`ov-color-${sfx}`);
     const tx=document.getElementById(`ov-tex-${sfx}`);
     const g=document.getElementById(`ov-gloss-${sfx}`);
-    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
-    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
+    if(f.tileUrl){
+      // Real scan: multiply blend shows actual print; color tint not needed
+      if(c){c.style.opacity=0;}
+      if(tx){
+        tx.className='ov-tex';
+        tx.style.backgroundImage=`url('${f.tileUrl}')`;
+        tx.style.backgroundSize='cover';
+        tx.style.backgroundPosition='center';
+        tx.style.mixBlendMode='multiply';
+        tx.style.opacity=0.90;
+      }
+    } else {
+      if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+      if(tx){tx.className=`ov-tex ${texClass}`;tx.style.backgroundImage='';tx.style.mixBlendMode='overlay';tx.style.opacity=texOp;}
+    }
     if(g){g.style.opacity=glossOp;}
   });
   const badge=document.getElementById('v3d-fab-badge');
@@ -915,7 +928,7 @@ function applyFabData(f) {
     // Load real fabric scan texture
     new THREE.TextureLoader().load(f.tileUrl, tex=>{
       tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
-      tex.repeat.set(v3d.scale*3, v3d.scale*3);
+      tex.repeat.set(v3d.scale, v3d.scale);
       tex.colorSpace=THREE.SRGBColorSpace;
       upperMats.forEach(m=>{
         if(m.map) m.map.dispose();
