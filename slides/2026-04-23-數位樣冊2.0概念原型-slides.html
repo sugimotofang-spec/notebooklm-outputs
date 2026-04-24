@@ -671,8 +671,20 @@ function applyOverlays(){
     const c=document.getElementById(`ov-color-${sfx}`);
     const tx=document.getElementById(`ov-tex-${sfx}`);
     const g=document.getElementById(`ov-gloss-${sfx}`);
-    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
-    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.backgroundImage='';tx.style.mixBlendMode='overlay';tx.style.opacity=texOp;}
+    if(f.tileUrl){
+      // Print fabric: use real scan with multiply blend (white areas transparent, prints visible)
+      if(c){c.style.opacity=0;}
+      if(tx){
+        tx.className='ov-tex';
+        tx.style.backgroundImage=`url('${f.tileUrl}')`;
+        tx.style.backgroundSize='32%';
+        tx.style.mixBlendMode='multiply';
+        tx.style.opacity=0.82;
+      }
+    } else {
+      if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+      if(tx){tx.className=`ov-tex ${texClass}`;tx.style.backgroundImage='';tx.style.mixBlendMode='overlay';tx.style.opacity=texOp;}
+    }
     if(g){g.style.opacity=glossOp;}
   });
   const badge=document.getElementById('v3d-fab-badge');
