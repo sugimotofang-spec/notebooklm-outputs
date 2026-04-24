@@ -595,7 +595,7 @@ const T={
     selFab:'選擇布料',adjMat:'材質調整',
     pSoft:'柔軟度',pTex:'紋理密度',pGloss:'光澤感',pSat:'色彩飽和',
     genBtn:'✨ AI 生成模擬圖',uploadImg:'上傳鞋款圖',share:'分享',v3dBtn:'3D 預覽',
-    uzTitle:'上傳 NB 574 鞋款圖片',uzSub:'拖放圖片到這裡，或點擊選擇\nDrop NB 574 image here or click to browse',uzBtn:'選擇圖片 / Browse',
+    uzTitle:'上傳你希望的鞋子照片',uzSub:'拖放圖片到這裡，或點擊選擇\nDrop your shoe photo here or click to browse',uzBtn:'選擇圖片 / Browse',
     generating:'AI 正在生成模擬圖…',
     angFront:'正面',angSide:'側面',angTop:'俯視',angBack:'背面',pause:'⏸ 暫停',play:'▶ 播放',
     specInfo:'規格資訊',colOpts:'可選色系',certs:'永續認證',comp:'材料組成',
@@ -622,7 +622,7 @@ const T={
     selFab:'Select Fabric',adjMat:'Material Adjust',
     pSoft:'Softness',pTex:'Texture Density',pGloss:'Gloss',pSat:'Saturation',
     genBtn:'✨ Generate AI Mockup',uploadImg:'Upload Shoe Image',share:'Share',v3dBtn:'3D View',
-    uzTitle:'Upload NB 574 Shoe Image',uzSub:'Drop image here or click to browse',uzBtn:'Browse Image',
+    uzTitle:'Upload Your Shoe Photo',uzSub:'Drop your shoe photo here or click to browse',uzBtn:'Browse Image',
     generating:'AI generating mockup…',
     angFront:'Front',angSide:'Side',angTop:'Top',angBack:'Back',pause:'⏸ Pause',play:'▶ Play',
     specInfo:'Specifications',colOpts:'Color Options',certs:'Certifications',comp:'Composition',
@@ -1044,24 +1044,33 @@ function initThreeJS(){
       // World-space bounds after positioning
       const wBox=new THREE.Box3().setFromObject(model);
       const wH=wBox.max.y-wBox.min.y;
-      const soleMats=[];
       model.traverse(child=>{
         if(!child.isMesh) return;
         child.castShadow=true; child.receiveShadow=true;
         const mats=Array.isArray(child.material)?child.material:[child.material];
-        const nm=(mats[0]?.name||'').toLowerCase();
+        // Get mesh-level Y fallback
         const cBox=new THREE.Box3().setFromObject(child);
-        const relY=((cBox.min.y+cBox.max.y)/2-wBox.min.y)/wH;
-        const isSole=nm.includes('sole')||nm.includes('rubber')||nm.includes('outsole')||relY<0.20;
-        const isLace=nm.includes('lace')||nm.includes('cord')||nm.includes('string');
-        if(isLace){/* keep original */}
-        else if(isSole){mats.forEach(m=>soleMats.push(m));}
-        else{mats.forEach(m=>upperMats.push(m));}
-      });
-      // White midsole / off-white sole
-      soleMats.forEach(m=>{
-        m.map=null; m.color.set(0xf4f2ee);
-        m.roughness=0.88; m.metalness=0; m.needsUpdate=true;
+        const meshRelY=((cBox.min.y+cBox.max.y)/2-wBox.min.y)/wH;
+        const meshLow=meshRelY<0.28;
+        // Check EACH material individually (not just mats[0])
+        mats.forEach(m=>{
+          const mn=(m.name||'').toLowerCase();
+          const isSole=mn.includes('sole')||mn.includes('rubber')||mn.includes('outsole')||
+                       mn.includes('midsole')||mn.includes('foxing')||mn.includes('bottom')||
+                       mn.includes('strobel')||mn.includes('ground');
+          const isLace=mn.includes('lace')||mn.includes('cord')||mn.includes('string')||mn.includes('tie');
+          const isLogo=mn.includes('logo')||mn.includes('eyelet')||mn.includes('brand')||mn.includes('metal');
+          const hadNoMap=!m.map; // solid-color materials (often midsole / outsole)
+          if(isLace||isLogo){
+            /* keep original */
+          } else if(isSole||(hadNoMap&&meshLow)){
+            // Sole / midsole → off-white
+            m.map=null; m.color.set(0xf4f2ee);
+            m.roughness=0.90; m.metalness=0; m.needsUpdate=true;
+          } else {
+            upperMats.push(m);
+          }
+        });
       });
       apply3dFabric();
       const el=document.getElementById('v3d-loading');
