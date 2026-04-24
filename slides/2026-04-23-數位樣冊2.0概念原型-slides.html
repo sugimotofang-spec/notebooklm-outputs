@@ -1048,22 +1048,23 @@ function initThreeJS(){
         if(!child.isMesh) return;
         child.castShadow=true; child.receiveShadow=true;
         const mats=Array.isArray(child.material)?child.material:[child.material];
-        // Get mesh-level Y fallback
+        // Use TOP of mesh bounding box (more reliable than center for sole detection)
         const cBox=new THREE.Box3().setFromObject(child);
-        const meshRelY=((cBox.min.y+cBox.max.y)/2-wBox.min.y)/wH;
-        const meshLow=meshRelY<0.28;
+        const meshTopRelY=(cBox.max.y-wBox.min.y)/wH;
+        const meshIsSole=meshTopRelY<0.35;
         // Check EACH material individually (not just mats[0])
         mats.forEach(m=>{
           const mn=(m.name||'').toLowerCase();
+          // Debug: open browser console to see actual material names
+          console.log(`[3D] mesh:"${child.name}" mat:"${m.name}" topRelY:${meshTopRelY.toFixed(2)} hasMap:${!!m.map}`);
           const isSole=mn.includes('sole')||mn.includes('rubber')||mn.includes('outsole')||
                        mn.includes('midsole')||mn.includes('foxing')||mn.includes('bottom')||
-                       mn.includes('strobel')||mn.includes('ground');
+                       mn.includes('strobel')||mn.includes('ground')||mn.includes('base');
           const isLace=mn.includes('lace')||mn.includes('cord')||mn.includes('string')||mn.includes('tie');
           const isLogo=mn.includes('logo')||mn.includes('eyelet')||mn.includes('brand')||mn.includes('metal');
-          const hadNoMap=!m.map; // solid-color materials (often midsole / outsole)
           if(isLace||isLogo){
             /* keep original */
-          } else if(isSole||(hadNoMap&&meshLow)){
+          } else if(isSole||meshIsSole){
             // Sole / midsole → off-white
             m.map=null; m.color.set(0xf4f2ee);
             m.roughness=0.90; m.metalness=0; m.needsUpdate=true;
