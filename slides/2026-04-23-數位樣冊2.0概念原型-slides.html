@@ -998,7 +998,7 @@ function initThreeJS(){
       const wBox=new THREE.Box3().setFromObject(model);
       const wH=wBox.max.y-wBox.min.y;
       // Sole threshold: bottom 28% of world height = sole region
-      const soleMaxY = wBox.min.y + wH * 0.28;
+      const soleMaxY = wBox.min.y + wH * 0.18;
       model.traverse(child=>{
         if(!child.isMesh) return;
         child.castShadow=true; child.receiveShadow=true;
