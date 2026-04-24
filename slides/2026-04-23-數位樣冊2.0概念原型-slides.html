@@ -1044,28 +1044,29 @@ function initThreeJS(){
       // World-space bounds after positioning
       const wBox=new THREE.Box3().setFromObject(model);
       const wH=wBox.max.y-wBox.min.y;
+      const dbgLines=[];
       model.traverse(child=>{
         if(!child.isMesh) return;
         child.castShadow=true; child.receiveShadow=true;
         const mats=Array.isArray(child.material)?child.material:[child.material];
-        // Use TOP of mesh bounding box (more reliable than center for sole detection)
         const cBox=new THREE.Box3().setFromObject(child);
         const meshTopRelY=(cBox.max.y-wBox.min.y)/wH;
+        const meshBotRelY=(cBox.min.y-wBox.min.y)/wH;
         const meshIsSole=meshTopRelY<0.35;
-        // Check EACH material individually (not just mats[0])
         mats.forEach(m=>{
           const mn=(m.name||'').toLowerCase();
-          // Debug: open browser console to see actual material names
-          console.log(`[3D] mesh:"${child.name}" mat:"${m.name}" topRelY:${meshTopRelY.toFixed(2)} hasMap:${!!m.map}`);
           const isSole=mn.includes('sole')||mn.includes('rubber')||mn.includes('outsole')||
                        mn.includes('midsole')||mn.includes('foxing')||mn.includes('bottom')||
                        mn.includes('strobel')||mn.includes('ground')||mn.includes('base');
           const isLace=mn.includes('lace')||mn.includes('cord')||mn.includes('string')||mn.includes('tie');
           const isLogo=mn.includes('logo')||mn.includes('eyelet')||mn.includes('brand')||mn.includes('metal');
+          let tag='UPPER';
+          if(isLace||isLogo) tag='LACE/LOGO';
+          else if(isSole||meshIsSole) tag='SOLE';
+          dbgLines.push(`${tag} | top:${meshTopRelY.toFixed(2)} | mesh:"${child.name||'-'}" mat:"${m.name||'-'}"`);
           if(isLace||isLogo){
             /* keep original */
           } else if(isSole||meshIsSole){
-            // Sole / midsole → off-white
             m.map=null; m.color.set(0xf4f2ee);
             m.roughness=0.90; m.metalness=0; m.needsUpdate=true;
           } else {
@@ -1073,6 +1074,12 @@ function initThreeJS(){
           }
         });
       });
+      // Show debug overlay for 15 seconds
+      const dbgEl=document.createElement('div');
+      dbgEl.style.cssText='position:absolute;top:8px;left:8px;background:rgba(0,0,0,.78);color:#0f0;font:10px monospace;padding:6px 8px;border-radius:6px;z-index:99;max-width:340px;white-space:pre;line-height:1.5;pointer-events:none';
+      dbgEl.textContent=dbgLines.join('\n');
+      document.getElementById('stage3d').appendChild(dbgEl);
+      setTimeout(()=>dbgEl.remove(),20000);
       apply3dFabric();
       const el=document.getElementById('v3d-loading');
       if(el) el.style.display='none';
