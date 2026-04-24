@@ -98,14 +98,15 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .shoe-viewer{
   position:relative;
   display:inline-block;
-  isolation:isolate; /* critical for mix-blend-mode to scope correctly */
-  border-radius:12px;
+  isolation:isolate;
+  width:300px;height:300px;
+  border-radius:24px;
   overflow:hidden;
-  box-shadow:0 16px 48px rgba(0,0,0,.22);
+  box-shadow:0 16px 48px rgba(0,0,0,.18);
   transition:transform .3s;
 }
-.shoe-viewer:hover{transform:scale(1.01)}
-.shoe-viewer img{display:block;max-height:380px;max-width:100%;border-radius:12px}
+.shoe-viewer:hover{transform:scale(1.02)}
+#fab-tile-sim{width:100%;height:100%;display:block;}
 
 /* The color overlay: uses mix-blend-mode:color so white sole stays white,
    only the darker upper gets tinted with the fabric hue */
@@ -371,36 +372,21 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
           </div>
         </div>
         <div class="act-btns">
-          <button class="act-btn" onclick="triggerUpload()">📸 <span data-i18n="uploadImg">上傳鞋款圖</span></button>
           <button class="act-btn" onclick="doShare()">📤 <span data-i18n="share">分享</span></button>
           <button class="act-btn primary" onclick="goTab('view3d',document.querySelectorAll('.tab-btn')[2])">🔄 <span data-i18n="v3dBtn">3D 預覽</span></button>
         </div>
       </div>
 
       <div class="product-stage" id="pstage">
-        <input type="file" accept="image/*" id="shoe-file" onchange="handleUpload(this.files[0])">
 
-        <!-- Upload prompt -->
-        <div class="upload-zone" id="upload-zone"
-             onclick="triggerUpload()"
-             ondragover="event.preventDefault();this.classList.add('dragover')"
-             ondragleave="this.classList.remove('dragover')"
-             ondrop="event.preventDefault();this.classList.remove('dragover');handleUpload(event.dataTransfer.files[0])">
-          <div class="uz-icon">👟</div>
-          <div class="uz-title" data-i18n="uzTitle">上傳 NB 574 鞋款圖片</div>
-          <div class="uz-sub" data-i18n="uzSub">拖放圖片到這裡，或點擊選擇<br>Drop NB 574 image here or click to browse</div>
-          <button class="uz-btn" data-i18n="uzBtn">選擇圖片 / Browse</button>
-        </div>
-
-        <!-- Shoe viewer (hidden until image uploaded) -->
-        <div id="shoe-display" style="display:none;position:relative">
+        <!-- Fabric tile visualization (fixed — no upload needed) -->
+        <div id="shoe-display" style="position:relative">
           <div class="shoe-viewer" id="shoe-viewer">
-            <img id="shoe-img-sim" src="" alt="NB 574">
+            <div id="fab-tile-sim" class="tx-woven" style="--sc:#e85d8a"></div>
             <div class="ov-color" id="ov-color-sim"></div>
             <div class="ov-tex"  id="ov-tex-sim"></div>
             <div class="ov-gloss" id="ov-gloss-sim"></div>
           </div>
-          <!-- floating labels -->
           <div class="float-tag" style="top:-16px;right:-108px" id="ft-mat">🧵 100% Recycled PET</div>
           <div class="float-tag" style="bottom:12px;left:-88px" id="ft-code">📋 EFJPT027</div>
         </div>
@@ -655,7 +641,6 @@ let selId='EFJPT027';
 let visibleFabs=[...FABRICS];
 let rotating=true;
 let col3d='#e85d8a';
-let shoeImgSrc=null;  // uploaded image data URL
 const params={soft:65,tex:50,gloss:30,sat:80};
 
 /* ══════════ UTILS ══════════ */
@@ -669,56 +654,28 @@ function texPatClass(tex){
   return'tex-mesh-pat';
 }
 
-/* ══════════ UPLOAD ══════════ */
-function triggerUpload(){document.getElementById('shoe-file').click()}
-
+/* ══════════ UPLOAD (removed — fixed shoe model) ══════════ */
 function handleUpload(file){
-  if(!file||!file.type.startsWith('image/'))return;
-  const reader=new FileReader();
-  reader.onload=e=>{
-    shoeImgSrc=e.target.result;
-    // persist across tab changes in this session
-    try{sessionStorage.setItem('shoe_img',shoeImgSrc)}catch(_){}
-    activateShoeViewer();
-    toast(curLang==='zh'?'✅ 圖片上傳成功！切換布料即可預覽':'✅ Image uploaded! Switch fabrics to preview.');
-  };
-  reader.readAsDataURL(file);
+  // upload feature removed
 }
 
-function activateShoeViewer(){
-  if(!shoeImgSrc)return;
-  // simulator
-  document.getElementById('shoe-img-sim').src=shoeImgSrc;
-  document.getElementById('upload-zone').style.display='none';
-  document.getElementById('shoe-display').style.display='block';
-  // 3d view
-  document.getElementById('shoe-img-3d').src=shoeImgSrc;
-  document.getElementById('hint-3d').style.display='none';
-  document.getElementById('shoe-display-3d').style.display='block';
-  document.getElementById('shoe-shadow-3d').style.display='block';
-  applyOverlays();
-}
-
-/* ══════════ OVERLAYS ══════════
-   mix-blend-mode: color  → takes hue+saturation from overlay, luminosity from photo
-   Result: white midsole stays white, suede upper gets tinted with fabric color.
-   mix-blend-mode: soft-light → adds subtle fabric surface texture
-   mix-blend-mode: screen     → adds gloss highlight
-*/
+/* ══════════ OVERLAYS ══════════ */
 function applyOverlays(){
-  const f=fab();if(!f||!shoeImgSrc)return;
-  const colorOp  = 0.35 + (params.sat  /100)*0.50;  // 0.35–0.85
-  const texOp    = 0.25 + (params.tex  /100)*0.40;  // 0.25–0.65  (always visible)
-  const glossOp  = (params.gloss/100)*0.42;           // 0–0.42
+  const f=fab();if(!f)return;
+  const colorOp = 0.35 + (params.sat  /100)*0.50;
+  const texOp   = 0.25 + (params.tex  /100)*0.40;
+  const glossOp = (params.gloss/100)*0.42;
   const texClass = texPatClass(f.tex);
-  ['sim','3d'].forEach(sfx=>{
-    const c=document.getElementById(`ov-color-${sfx}`);
-    const tx=document.getElementById(`ov-tex-${sfx}`);
-    const g=document.getElementById(`ov-gloss-${sfx}`);
-    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
-    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
-    if(g){g.style.opacity=glossOp;}
-  });
+  // Update fabric tile base color + pattern
+  const tile=document.getElementById('fab-tile-sim');
+  if(tile){tile.style.setProperty('--sc',f.color);tile.className=f.tex;}
+  // Apply overlay tints
+  const c=document.getElementById('ov-color-sim');
+  const tx=document.getElementById('ov-tex-sim');
+  const g=document.getElementById('ov-gloss-sim');
+  if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+  if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
+  if(g){g.style.opacity=glossOp;}
 }
 
 function setParam(key,val){
@@ -795,7 +752,6 @@ function updateSimToolbar(){
 }
 
 function doGenerate(){
-  if(!shoeImgSrc){toast(curLang==='zh'?'請先上傳鞋款圖片':'Please upload a shoe image first');return;}
   const ov=document.getElementById('gen-ov');
   ov.style.pointerEvents='all';ov.classList.add('show');
   toast(curLang==='zh'?'🤖 AI 正在生成模擬圖…':'🤖 AI generating mockup…');
@@ -857,15 +813,12 @@ function setAngle(a,btn){
 }
 
 /* ══════════ INIT ══════════ */
-// Restore session image if available
-try{const saved=sessionStorage.getItem('shoe_img');if(saved){shoeImgSrc=saved;}}catch(_){}
-
 document.getElementById('shoe3d').addEventListener('click',()=>toggleRot(document.getElementById('rot-btn')));
 renderGrid(FABRICS);
 renderMini();
 updateSimToolbar();
 updateInfoPanels();
-if(shoeImgSrc)activateShoeViewer();
+applyOverlays();
 </script>
 <script type="module">
 import * as THREE from 'three';
