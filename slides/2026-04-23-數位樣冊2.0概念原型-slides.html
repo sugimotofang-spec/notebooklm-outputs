@@ -692,7 +692,7 @@ function goTab(tab,btn){
   document.getElementById('tab-'+tab).classList.add('active');
   btn.classList.add('active');
   if(tab==='simulator'){renderMini();updateSimToolbar();}
-  if(tab==='view3d'){updateInfoPanels();const _f=fab();document.dispatchEvent(new CustomEvent('tlcTab3dOpen',{detail:{id:selId,color:_f.color,tex:_f.tex,name:_f.name}}));}
+  if(tab==='view3d'){updateInfoPanels();const _f=fab();document.dispatchEvent(new CustomEvent('tlcTab3dOpen',{detail:{id:selId,color:_f.color,tex:_f.tex,name:_f.name,tileUrl:_f.tileUrl}}));}
 }
 
 /* ══════════ LIBRARY ══════════ */
