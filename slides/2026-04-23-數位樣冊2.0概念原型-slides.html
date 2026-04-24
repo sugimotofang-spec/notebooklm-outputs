@@ -280,7 +280,6 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 .v3d-hint{position:absolute;bottom:14px;left:50%;transform:translateX(-50%);color:rgba(0,0,0,.3);font-size:11px;pointer-events:none;white-space:nowrap}
 .v3d-fab-badge{position:absolute;top:14px;right:14px;background:rgba(26,95,168,.88);backdrop-filter:blur(8px);color:#fff;font-size:12px;font-weight:600;padding:5px 13px;border-radius:20px;z-index:10;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 </style>
-<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/"}}</script>
 </head>
 <body>
 
@@ -403,31 +402,13 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 <!-- ═══ TAB 3: 3D 預覽 ═══ -->
 <div id="tab-view3d" class="panel">
   <div class="v3d-layout">
-    <div class="stage3d" id="stage3d">
-      <canvas id="three-canvas"></canvas>
-      <div class="v3d-loading" id="v3d-loading">
-        <div class="v3d-spinner"></div>
-        <div style="margin-top:12px;font-size:13px" data-i18n="loading3d">載入 3D 模型中...</div>
+    <div class="stage3d" id="stage3d" style="display:flex;align-items:center;justify-content:center;position:relative;">
+      <div class="shoe-viewer" id="shoe-viewer-3d">
+        <img id="shoe-img-3d" src="shoe-3d.jpg" alt="Shoe">
+        <div class="ov-color" id="ov-color-3d"></div>
+        <div class="ov-tex"  id="ov-tex-3d"></div>
+        <div class="ov-gloss" id="ov-gloss-3d"></div>
       </div>
-      <div class="v3d-ctrl-panel">
-        <div class="v3d-ctrl-title" data-i18n="matProps">材質屬性</div>
-        <div class="v3d-ctrl-row">
-          <label>Roughness</label>
-          <input type="range" id="v3d-roughness" min="0" max="1" step="0.05" value="0.75" oninput="window.update3dMat('roughness',+this.value)">
-          <span id="v3d-roughness-v">0.75</span>
-        </div>
-        <div class="v3d-ctrl-row">
-          <label>Metalness</label>
-          <input type="range" id="v3d-metalness" min="0" max="1" step="0.05" value="0.05" oninput="window.update3dMat('metalness',+this.value)">
-          <span id="v3d-metalness-v">0.05</span>
-        </div>
-        <div class="v3d-ctrl-row">
-          <label>Tex Scale</label>
-          <input type="range" id="v3d-texscale" min="0.5" max="4" step="0.25" value="1" oninput="window.update3dMat('scale',+this.value)">
-          <span id="v3d-texscale-v">1×</span>
-        </div>
-      </div>
-      <div class="v3d-hint" data-i18n="drag3d">🖱 拖曳旋轉 · 滾輪縮放</div>
       <div class="v3d-fab-badge" id="v3d-fab-badge"></div>
     </div>
 
@@ -665,12 +646,16 @@ function applyOverlays(){
   const texOp   = 0.25 + (params.tex  /100)*0.40;
   const glossOp = (params.gloss/100)*0.42;
   const texClass = texPatClass(f.tex);
-  const c=document.getElementById('ov-color-sim');
-  const tx=document.getElementById('ov-tex-sim');
-  const g=document.getElementById('ov-gloss-sim');
-  if(c){c.style.background=f.color;c.style.opacity=colorOp;}
-  if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
-  if(g){g.style.opacity=glossOp;}
+  ['sim','3d'].forEach(sfx=>{
+    const c=document.getElementById(`ov-color-${sfx}`);
+    const tx=document.getElementById(`ov-tex-${sfx}`);
+    const g=document.getElementById(`ov-gloss-${sfx}`);
+    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.opacity=texOp;}
+    if(g){g.style.opacity=glossOp;}
+  });
+  const badge=document.getElementById('v3d-fab-badge');
+  if(badge) badge.textContent=f.name;
 }
 
 function setParam(key,val){
@@ -815,247 +800,6 @@ updateSimToolbar();
 updateInfoPanels();
 applyOverlays();
 </script>
-<script type="module">
-import * as THREE from 'three';
-import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
-import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
 
-const SHOE_URL  = 'https://cdn.jsdelivr.net/gh/KhronosGroup/glTF-Sample-Assets@main/Models/MaterialsVariantsShoe/glTF-Binary/MaterialsVariantsShoe.glb';
-const SHOE_URL2 = 'https://raw.githubusercontent.com/KhronosGroup/glTF-Sample-Models/main/2.0/MaterialsVariantsShoe/glTF-Binary/MaterialsVariantsShoe.glb';
-
-let renderer, scene, camera, controls;
-let upperMats = [];
-let v3d = {roughness:0.75, metalness:0.05, scale:1};
-let initialized = false;
-let lastFab = null;   // stores last fabric data from events
-
-function genTex(color, type, scale) {
-  const S = 512;
-  const cv = document.createElement('canvas');
-  cv.width = cv.height = S;
-  const ctx = cv.getContext('2d');
-  const hex = color.replace('#','');
-  const r = parseInt(hex.slice(0,2),16);
-  const g = parseInt(hex.slice(2,4),16);
-  const b = parseInt(hex.slice(4,6),16);
-  // Slightly desaturated base (more fabric-like, less saturated plastic)
-  const rb=Math.round(r*.85+32), gb=Math.round(g*.85+32), bb=Math.round(b*.85+32);
-  ctx.fillStyle=`rgb(${rb},${gb},${bb})`;
-  ctx.fillRect(0,0,S,S);
-  const ps=Math.round(S/(32/scale));
-  if(type==='woven') {
-    // Horizontal yarns (slightly lighter)
-    for(let i=0;i<S;i+=ps){
-      const yarnW=Math.max(2,ps*.55);
-      const grad=ctx.createLinearGradient(0,i,0,i+yarnW);
-      grad.addColorStop(0,  `rgba(255,255,255,.13)`);
-      grad.addColorStop(.5, `rgba(255,255,255,.04)`);
-      grad.addColorStop(1,  `rgba(0,0,0,.10)`);
-      ctx.fillStyle=grad; ctx.fillRect(0,i,S,yarnW);
-    }
-    // Vertical yarns (slightly darker, weave-under shadow)
-    for(let i=0;i<S;i+=ps){
-      const yarnW=Math.max(2,ps*.55);
-      const grad=ctx.createLinearGradient(i,0,i+yarnW,0);
-      grad.addColorStop(0,  `rgba(0,0,0,.14)`);
-      grad.addColorStop(.5, `rgba(0,0,0,.06)`);
-      grad.addColorStop(1,  `rgba(255,255,255,.10)`);
-      ctx.fillStyle=grad; ctx.fillRect(i,0,yarnW,S);
-    }
-    // Intersection shadow (where yarns cross)
-    for(let i=0;i<S;i+=ps) for(let j=0;j<S;j+=ps){
-      ctx.fillStyle='rgba(0,0,0,.12)';
-      ctx.fillRect(i,j,Math.max(1,ps*.22),Math.max(1,ps*.22));
-    }
-  } else if(type==='knit') {
-    const ks=ps*1.8;
-    for(let row=0;row*ks<S+ks;row++){
-      for(let col=-1;col*(ks*.8)<S+ks;col++){
-        const ox=col*(ks*.8)+(row%2)*(ks*.4), oy=row*ks*.7;
-        // Upper loop (highlight)
-        ctx.beginPath();
-        ctx.ellipse(ox+ks*.4,oy+ks*.3,ks*.36,ks*.22,0,Math.PI,2*Math.PI);
-        ctx.strokeStyle=`rgba(255,255,255,.18)`; ctx.lineWidth=2.5; ctx.stroke();
-        // Lower loop (shadow)
-        ctx.beginPath();
-        ctx.ellipse(ox+ks*.4,oy+ks*.3,ks*.36,ks*.22,0,0,Math.PI);
-        ctx.strokeStyle=`rgba(0,0,0,.18)`; ctx.lineWidth=2.0; ctx.stroke();
-      }
-    }
-  } else {
-    // Mesh: open diamond grid, delicate lines
-    const ms=Math.max(5,ps*.9);
-    ctx.strokeStyle=`rgba(0,0,0,.28)`; ctx.lineWidth=1.2;
-    for(let i=0;i<S+ms;i+=ms){
-      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i-ms,S); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+ms,S); ctx.stroke();
-    }
-    // Light highlight lines
-    ctx.strokeStyle=`rgba(255,255,255,.12)`; ctx.lineWidth=0.8;
-    for(let i=ms*.5;i<S+ms;i+=ms){
-      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i-ms,S); ctx.stroke();
-      ctx.beginPath(); ctx.moveTo(i,0); ctx.lineTo(i+ms,S); ctx.stroke();
-    }
-  }
-  return cv;
-}
-
-function applyFabData(f) {
-  if(!f || upperMats.length===0) return;
-  const type=f.tex.includes('woven')?'woven':f.tex.includes('knit')?'knit':'mesh';
-  const cv=genTex(f.color,type,v3d.scale);
-  const tex=new THREE.CanvasTexture(cv);
-  tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
-  tex.repeat.set(4,4);
-  tex.colorSpace=THREE.SRGBColorSpace;
-  upperMats.forEach(m=>{
-    if(m.map) m.map.dispose();
-    m.map=tex; m.color.set(0xffffff);
-    m.roughness=v3d.roughness; m.metalness=v3d.metalness;
-    m.needsUpdate=true;
-  });
-  const badge=document.getElementById('v3d-fab-badge');
-  if(badge) badge.textContent=f.name;
-}
-function apply3dFabric(){applyFabData(lastFab);}
-
-window.update3dMat=function(prop,val){
-  if(prop==='roughness'){v3d.roughness=val;document.getElementById('v3d-roughness-v').textContent=val.toFixed(2);}
-  else if(prop==='metalness'){v3d.metalness=val;document.getElementById('v3d-metalness-v').textContent=val.toFixed(2);}
-  else if(prop==='scale'){v3d.scale=val;document.getElementById('v3d-texscale-v').textContent=val.toFixed(1)+'×';apply3dFabric();return;}
-  upperMats.forEach(m=>{m.roughness=v3d.roughness;m.metalness=v3d.metalness;m.needsUpdate=true;});
-};
-
-function initThreeJS(){
-  if(initialized) return;
-  initialized=true;
-  const canvas=document.getElementById('three-canvas');
-  const container=document.getElementById('stage3d');
-  const W=container.offsetWidth, H=container.offsetHeight;
-
-  renderer=new THREE.WebGLRenderer({canvas,antialias:true});
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
-  renderer.setSize(W,H);
-  renderer.shadowMap.enabled=true;
-  renderer.shadowMap.type=THREE.PCFSoftShadowMap;
-  renderer.outputColorSpace=THREE.SRGBColorSpace;
-  renderer.toneMapping=THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure=1.3;
-
-  scene=new THREE.Scene();
-  scene.background=new THREE.Color(0xede8df);
-
-  camera=new THREE.PerspectiveCamera(40,W/H,0.01,50);
-  camera.position.set(0,0.6,3.8);
-
-  scene.add(new THREE.AmbientLight(0xfff5e8,0.9));
-  const sun=new THREE.DirectionalLight(0xffffff,2.0);
-  sun.position.set(3,8,4); sun.castShadow=true;
-  sun.shadow.mapSize.set(2048,2048);
-  sun.shadow.camera.left=sun.shadow.camera.bottom=-3;
-  sun.shadow.camera.right=sun.shadow.camera.top=3;
-  sun.shadow.camera.far=30; sun.shadow.bias=-0.001;
-  scene.add(sun);
-  const fill=new THREE.DirectionalLight(0xdeeeff,0.5);
-  fill.position.set(-3,2,-2); scene.add(fill);
-
-  const ground=new THREE.Mesh(
-    new THREE.CircleGeometry(5,64),
-    new THREE.MeshStandardMaterial({color:0xe8e0d0,roughness:1,metalness:0})
-  );
-  ground.rotation.x=-Math.PI/2; ground.receiveShadow=true; scene.add(ground);
-
-  const spot=new THREE.SpotLight(0xfffae8,3,8,Math.PI/5,0.6,1.5);
-  spot.position.set(0,5,0); spot.target.position.set(0,0,0);
-  scene.add(spot,spot.target);
-
-  controls=new OrbitControls(camera,renderer.domElement);
-  controls.enableDamping=true; controls.dampingFactor=0.06;
-  controls.minDistance=1.5; controls.maxDistance=8;
-  controls.target.set(0,0.3,0);
-  controls.autoRotate=true; controls.autoRotateSpeed=1.5;
-  controls.maxPolarAngle=Math.PI*.78;
-  renderer.domElement.addEventListener('pointerdown',()=>controls.autoRotate=false);
-
-  const loader=new GLTFLoader();
-  function tryLoad(url,fb){
-    loader.load(url,gltf=>{
-      const model=gltf.scene;
-      // Scale & position
-      const box=new THREE.Box3().setFromObject(model);
-      const size=box.getSize(new THREE.Vector3());
-      const sc=2.2/Math.max(size.x,size.y,size.z);
-      const center=box.getCenter(new THREE.Vector3());
-      model.scale.setScalar(sc);
-      model.position.set(-center.x*sc,-box.min.y*sc,-center.z*sc);
-      scene.add(model);
-      // World-space bounds after positioning
-      const wBox=new THREE.Box3().setFromObject(model);
-      const wH=wBox.max.y-wBox.min.y;
-      // Sole threshold: bottom 28% of world height = sole region
-      const soleMaxY = wBox.min.y + wH * 0.18;
-      model.traverse(child=>{
-        if(!child.isMesh) return;
-        child.castShadow=true; child.receiveShadow=true;
-        const mats=Array.isArray(child.material)?child.material:[child.material];
-        mats.forEach(m=>{
-          const mn=(m.name||'').toLowerCase();
-          const isLace=mn.includes('lace')||mn.includes('cord')||mn.includes('string')||mn.includes('tie');
-          if(isLace) return; // keep lace original
-          // Add to upper mats so fabric texture gets applied
-          upperMats.push(m);
-          // Inject GLSL: override sole region (world Y ≤ soleMaxY) with off-white
-          m.userData.soleMaxY=soleMaxY;
-          m.onBeforeCompile=shader=>{
-            shader.uniforms.soleMaxY={value:m.userData.soleMaxY};
-            shader.uniforms.soleColor={value:new THREE.Color(0xf4f2ee)};
-            shader.vertexShader='varying vec3 vWorldPos;\n'+shader.vertexShader;
-            shader.vertexShader=shader.vertexShader.replace(
-              '#include <begin_vertex>',
-              '#include <begin_vertex>\nvWorldPos=(modelMatrix*vec4(position,1.0)).xyz;'
-            );
-            shader.fragmentShader='varying vec3 vWorldPos;\nuniform float soleMaxY;\nuniform vec3 soleColor;\n'+shader.fragmentShader;
-            shader.fragmentShader=shader.fragmentShader.replace(
-              '#include <map_fragment>',
-              '#include <map_fragment>\nif(vWorldPos.y<=soleMaxY){diffuseColor=vec4(soleColor,1.0);}'
-            );
-          };
-          m.needsUpdate=true;
-        });
-      });
-      apply3dFabric();
-      const el=document.getElementById('v3d-loading');
-      if(el) el.style.display='none';
-    },undefined,err=>{
-      if(fb) tryLoad(fb,null);
-      else {
-        const el=document.getElementById('v3d-loading');
-        if(el) el.innerHTML='<div style="color:#ef4444;text-align:center;font-size:13px;padding:20px">3D 模型載入失敗<br><small>請確認網路連線</small></div>';
-      }
-    });
-  }
-  tryLoad(SHOE_URL,SHOE_URL2);
-
-  new ResizeObserver(()=>{
-    const W2=container.offsetWidth,H2=container.offsetHeight;
-    camera.aspect=W2/H2; camera.updateProjectionMatrix(); renderer.setSize(W2,H2);
-  }).observe(container);
-
-  (function loop(){requestAnimationFrame(loop);controls.update();renderer.render(scene,camera);})();
-}
-
-document.addEventListener('tlcTab3dOpen',e=>{
-  if(e.detail) lastFab=e.detail;
-  setTimeout(initThreeJS,50);
-  apply3dFabric();
-});
-document.addEventListener('tlcFabricChanged',e=>{
-  if(e.detail) lastFab=e.detail;
-  applyFabData(lastFab);
-});
-document.addEventListener('DOMContentLoaded',()=>{
-  if(document.getElementById('tab-view3d')?.classList.contains('active')) setTimeout(initThreeJS,100);
-});
-</script>
 </body>
 </html>
