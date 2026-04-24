@@ -558,6 +558,7 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 <script>
 /* ══════════ DATA ══════════ */
 const FABRICS=[
+  {id:'EFNOT001',name:'EFNOT001 WOVEN', type:'woven',color:'#f2a0b5',content:'50% Recycled Polyester + 50% Cotton',price:'--',         msi:0,    recycled:true, tex:'tx-woven',lead:14,width:'58"',supplier:'TLC',         tileUrl:'fabrics/EFNOT001.png'},
   {id:'EFJPT027',name:'AURES WOVEN',   type:'woven',color:'#e85d8a',content:'100% Recycled Polyester',              price:'US$8.94/SY', msi:14.74,recycled:true, tex:'tx-woven',lead:14,width:'56"',supplier:'TLC/TW,CN,VN'},
   {id:'EFJMT064',name:'VELERO KNIT',   type:'knit', color:'#3a86ff',content:'88% Recycled Nylon / 12% Spandex',    price:'US$11.20/SY',msi:12.30,recycled:true, tex:'tx-knit', lead:14,width:'58"',supplier:'TLC/TW,CN,VN'},
   {id:'EFMSH018',name:'AEROMESH PLUS', type:'mesh', color:'#06d6a0',content:'100% Polyester',                      price:'US$6.50/SY', msi:8.90, recycled:false,tex:'tx-mesh', lead:10,width:'60"',supplier:'TLC/TW,CN,VN'},
@@ -907,6 +908,26 @@ function genTex(color, type, scale) {
 
 function applyFabData(f) {
   if(!f || upperMats.length===0) return;
+  const badge=document.getElementById('v3d-fab-badge');
+  if(badge) badge.textContent=f.name;
+  if(f.tileUrl){
+    // Load real fabric scan texture
+    new THREE.TextureLoader().load(f.tileUrl, tex=>{
+      tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
+      tex.repeat.set(v3d.scale*3, v3d.scale*3);
+      tex.colorSpace=THREE.SRGBColorSpace;
+      upperMats.forEach(m=>{
+        if(m.map) m.map.dispose();
+        m.map=tex; m.color.set(0xffffff);
+        m.roughness=v3d.roughness; m.metalness=v3d.metalness;
+        m.needsUpdate=true;
+      });
+    }, undefined, ()=>applyFabDataCanvas(f));
+  } else {
+    applyFabDataCanvas(f);
+  }
+}
+function applyFabDataCanvas(f) {
   const type=f.tex.includes('woven')?'woven':f.tex.includes('knit')?'knit':'mesh';
   const cv=genTex(f.color,type,v3d.scale);
   const tex=new THREE.CanvasTexture(cv);
@@ -919,8 +940,6 @@ function applyFabData(f) {
     m.roughness=v3d.roughness; m.metalness=v3d.metalness;
     m.needsUpdate=true;
   });
-  const badge=document.getElementById('v3d-fab-badge');
-  if(badge) badge.textContent=f.name;
 }
 function apply3dFabric(){applyFabData(lastFab);}
 
