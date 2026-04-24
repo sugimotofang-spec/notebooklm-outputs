@@ -912,8 +912,9 @@ function applyFabData(f) {
   const badge=document.getElementById('v3d-fab-badge');
   if(badge) badge.textContent=f.name;
   if(f.tileUrl){
-    // Load real fabric scan texture
-    new THREE.TextureLoader().load(f.tileUrl, tex=>{
+    // Resolve to absolute URL — ES module fetch() resolves relative to CDN, not document
+    const absUrl = new URL(f.tileUrl, document.baseURI).href;
+    new THREE.TextureLoader().load(absUrl, tex=>{
       tex.wrapS=tex.wrapT=THREE.RepeatWrapping;
       tex.repeat.set(v3d.scale, v3d.scale);
       tex.colorSpace=THREE.SRGBColorSpace;
