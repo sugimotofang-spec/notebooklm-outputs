@@ -700,7 +700,7 @@ function renderGrid(list){
   document.getElementById('cnt').textContent=list.length;
   document.getElementById('fab-grid').innerHTML=list.map(f=>`
     <div class="fabric-card ${f.id===selId?'selected':''}" onclick="selFab('${f.id}')">
-      <div class="swatch ${f.tex}" style="--sc:${f.color}">
+      <div class="swatch ${f.tileUrl?'':f.tex}" style="--sc:${f.color};${f.tileUrl?`background:url('${f.tileUrl}') center/cover;`:''}">
         <div class="sw-badge">MSI ${f.msi}</div>
         ${f.recycled?'<div class="rec-tag">♻ Recycle</div>':''}
       </div>
