@@ -388,6 +388,11 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
           </div>
           <div class="float-tag" style="top:-16px;right:-108px" id="ft-mat">🧵 100% Recycled PET</div>
           <div class="float-tag" style="bottom:12px;left:-88px" id="ft-code">📋 EFJPT027</div>
+          <!-- Real fabric swatch thumbnail -->
+          <div id="sim-swatch-box" style="display:none;position:absolute;bottom:12px;right:-120px;width:96px;background:#fff;border-radius:10px;box-shadow:0 2px 10px rgba(0,0,0,.18);overflow:hidden;font-size:11px;text-align:center;">
+            <img id="sim-swatch-img" src="" alt="fabric" style="width:96px;height:96px;object-fit:cover;display:block;">
+            <div style="padding:4px 2px;color:#555;font-weight:600;" id="sim-swatch-lbl">實際布料</div>
+          </div>
         </div>
 
         <!-- AI generating overlay -->
@@ -671,24 +676,19 @@ function applyOverlays(){
     const c=document.getElementById(`ov-color-${sfx}`);
     const tx=document.getElementById(`ov-tex-${sfx}`);
     const g=document.getElementById(`ov-gloss-${sfx}`);
-    if(f.tileUrl){
-      // Print fabric: use real scan with multiply blend (white areas transparent, prints visible)
-      if(c){c.style.opacity=0;}
-      if(tx){
-        tx.className='ov-tex';
-        tx.style.backgroundImage=`url('${f.tileUrl}')`;
-        tx.style.backgroundSize='32%';
-        tx.style.mixBlendMode='multiply';
-        tx.style.opacity=0.82;
-      }
-    } else {
-      if(c){c.style.background=f.color;c.style.opacity=colorOp;}
-      if(tx){tx.className=`ov-tex ${texClass}`;tx.style.backgroundImage='';tx.style.mixBlendMode='overlay';tx.style.opacity=texOp;}
-    }
+    if(c){c.style.background=f.color;c.style.opacity=colorOp;}
+    if(tx){tx.className=`ov-tex ${texClass}`;tx.style.backgroundImage='';tx.style.mixBlendMode='overlay';tx.style.opacity=texOp;}
     if(g){g.style.opacity=glossOp;}
   });
   const badge=document.getElementById('v3d-fab-badge');
   if(badge) badge.textContent=f.name;
+  // Show real fabric thumbnail in simulator when scan available
+  const swBox=document.getElementById('sim-swatch-box');
+  const swImg=document.getElementById('sim-swatch-img');
+  if(swBox&&swImg){
+    if(f.tileUrl){swImg.src=f.tileUrl;swBox.style.display='block';}
+    else{swBox.style.display='none';}
+  }
 }
 
 function setParam(key,val){
