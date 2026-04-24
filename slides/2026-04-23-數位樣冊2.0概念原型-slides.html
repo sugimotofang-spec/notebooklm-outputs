@@ -99,14 +99,13 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
   position:relative;
   display:inline-block;
   isolation:isolate;
-  width:300px;height:300px;
-  border-radius:24px;
+  border-radius:12px;
   overflow:hidden;
   box-shadow:0 16px 48px rgba(0,0,0,.18);
   transition:transform .3s;
 }
-.shoe-viewer:hover{transform:scale(1.02)}
-#fab-tile-sim{width:100%;height:100%;display:block;}
+.shoe-viewer:hover{transform:scale(1.01)}
+.shoe-viewer img{display:block;max-height:400px;max-width:100%;}
 
 /* The color overlay: uses mix-blend-mode:color so white sole stays white,
    only the darker upper gets tinted with the fabric hue */
@@ -379,10 +378,10 @@ input[type=range]{width:100%;accent-color:var(--blue);cursor:pointer}
 
       <div class="product-stage" id="pstage">
 
-        <!-- Fabric tile visualization (fixed — no upload needed) -->
+        <!-- Default shoe image with CSS fabric overlay -->
         <div id="shoe-display" style="position:relative">
           <div class="shoe-viewer" id="shoe-viewer">
-            <div id="fab-tile-sim" class="tx-woven" style="--sc:#e85d8a"></div>
+            <img id="shoe-img-sim" src="shoe-default.png" alt="Shoe">
             <div class="ov-color" id="ov-color-sim"></div>
             <div class="ov-tex"  id="ov-tex-sim"></div>
             <div class="ov-gloss" id="ov-gloss-sim"></div>
@@ -666,10 +665,6 @@ function applyOverlays(){
   const texOp   = 0.25 + (params.tex  /100)*0.40;
   const glossOp = (params.gloss/100)*0.42;
   const texClass = texPatClass(f.tex);
-  // Update fabric tile base color + pattern
-  const tile=document.getElementById('fab-tile-sim');
-  if(tile){tile.style.setProperty('--sc',f.color);tile.className=f.tex;}
-  // Apply overlay tints
   const c=document.getElementById('ov-color-sim');
   const tx=document.getElementById('ov-tex-sim');
   const g=document.getElementById('ov-gloss-sim');
